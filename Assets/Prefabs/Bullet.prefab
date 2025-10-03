@@ -248,7 +248,7 @@ MonoBehaviour:
   _contactMask:
     serializedVersion: 2
     m_Bits: 2048
-  _damage: 5
+  _damage: 1
 --- !u!54 &8595460309212232771
 Rigidbody:
   m_ObjectHideFlags: 0
