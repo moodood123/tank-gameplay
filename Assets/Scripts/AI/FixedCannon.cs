@@ -93,7 +93,26 @@ public class FixedCannon : AgentController
     private void OnAgentDetected(AgentController agentController, bool isDetected)
     {
         // TODO: Add more advanced logic for picking targets
-        _trackingTarget = _detector.Agents.Count > 0 ? _detector.Agents[0].transform : null;
+
+        if (isDetected)
+        {
+            if (!_trackingTarget)
+            {
+                _trackingTarget = agentController.transform;
+            }
+        }
+        else
+        {
+            if (_trackingTarget == agentController.transform)
+            {
+                _trackingTarget = null;
+
+                if (_detector.Agents.Count > 0)
+                {
+                    _trackingTarget = _detector.Agents[0].transform;
+                }
+            }
+        }
     }
 
     private void Fire()

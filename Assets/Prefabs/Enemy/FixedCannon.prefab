@@ -241,7 +241,7 @@ MonoBehaviour:
   _detector: {fileID: 8663117535018057942}
   _panSpeed: 20
   _tiltSpeed: 20
-  _trackingFireDelay: 2
+  _trackingFireDelay: 1
   _aimAffordance: 1
   _reloadDelay: 2
   _debugTarget: {fileID: 6150551475493103704}
