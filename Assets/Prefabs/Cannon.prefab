@@ -25,7 +25,7 @@ Transform:
   m_GameObject: {fileID: 137272122047050305}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0.20000005}
+  m_LocalPosition: {x: 0, y: 0, z: -0.5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -392,8 +392,9 @@ GameObject:
   m_Component:
   - component: {fileID: 9105326360803895936}
   - component: {fileID: 4006761888936687340}
-  - component: {fileID: 1910624180095622703}
   - component: {fileID: 6822363316043412373}
+  - component: {fileID: 6304649891539871644}
+  - component: {fileID: 1910624180095622703}
   m_Layer: 9
   m_Name: Cannon
   m_TagString: Untagged
@@ -512,6 +513,74 @@ MonoBehaviour:
       _useFixedUpdate: 0
       _updateType: 0
   _shotEffect: {fileID: 2219094232315762775}
+  _camImpulseForce: 0.25
+--- !u!114 &6822363316043412373
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8647363290304710834}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 804064842b5ff45438ff8d089badae88, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _interactionPrompt: Loader
+  _holdingTransform: {fileID: 7757508897631444009}
+--- !u!114 &6304649891539871644
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8647363290304710834}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 180ecf9b41d478f468eb3e9083753217, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ImpulseDefinition:
+    ImpulseChannel: 1
+    ImpulseShape: 2
+    CustomImpulseShape:
+      serializedVersion: 2
+      m_Curve: []
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    ImpulseDuration: 0.4
+    ImpulseType: 2
+    DissipationRate: 0.75
+    RawSignal: {fileID: 0}
+    AmplitudeGain: 1
+    FrequencyGain: 1
+    RepeatMode: 0
+    Randomize: 1
+    TimeEnvelope:
+      AttackShape:
+        serializedVersion: 2
+        m_Curve: []
+        m_PreInfinity: 2
+        m_PostInfinity: 2
+        m_RotationOrder: 4
+      DecayShape:
+        serializedVersion: 2
+        m_Curve: []
+        m_PreInfinity: 2
+        m_PostInfinity: 2
+        m_RotationOrder: 4
+      AttackTime: 0
+      SustainTime: 0.2
+      DecayTime: 0.7
+      ScaleWithImpact: 1
+      HoldForever: 0
+    ImpactRadius: 100
+    DirectionMode: 0
+    DissipationMode: 2
+    DissipationDistance: 10
+    PropagationSpeed: 343
+  DefaultVelocity: {x: 1, y: 0, z: 0}
 --- !u!65 &1910624180095622703
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -533,20 +602,6 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 0.4, y: 0.4, z: 0.5}
   m_Center: {x: 0, y: 0, z: -0.75}
---- !u!114 &6822363316043412373
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8647363290304710834}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 804064842b5ff45438ff8d089badae88, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _interactionPrompt: Loader
-  _holdingTransform: {fileID: 7757508897631444009}
 --- !u!1001 &2794553575612952197
 PrefabInstance:
   m_ObjectHideFlags: 0

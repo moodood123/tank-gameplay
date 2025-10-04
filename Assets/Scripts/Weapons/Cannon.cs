@@ -1,5 +1,6 @@
 using System.Collections;
 using PrimeTween;
+using Unity.Cinemachine;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.VFX;
@@ -15,14 +16,17 @@ public class Cannon : Gun
     [SerializeField] private TweenSettings<float> _recoilSettings;
     [SerializeField] private TweenSettings<float> _recoverySettings;
     [SerializeField] private VisualEffect _shotEffect;
+    [SerializeField] private float _camImpulseForce;
 
     public bool IsLoaded => _loader.IsLoaded;
 
     private CannonLoader _loader;
+    private CinemachineImpulseSource _impulseSource;
 
     private void Awake()
     {
         _loader = GetComponent<CannonLoader>();
+        _impulseSource = GetComponent<CinemachineImpulseSource>();
     }
     
     public override void OnStartFire(bool debugFire = false)
@@ -30,6 +34,7 @@ public class Cannon : Gun
         if (IsLoaded)
         {
             Fire();
+            _impulseSource.GenerateImpulse(_camImpulseForce);
             _shotEffect.SendEvent("OnFire");
             StartCoroutine(RecoilSequence());
         }
