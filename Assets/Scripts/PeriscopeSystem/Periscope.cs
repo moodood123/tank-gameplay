@@ -10,8 +10,6 @@ public class Periscope : MonoBehaviour
     [SerializeField] private RawImage _outputScreen;
     [SerializeField] private float _renderInterval;
     
-    private bool _isRendering = false;
-
     private void Awake()
     {
         _relay = GetComponentInParent<PeriscopeRelay>();

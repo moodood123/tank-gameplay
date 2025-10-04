@@ -1,3 +1,5 @@
+using System.Collections;
+using PrimeTween;
 using Unity.Cinemachine;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -13,24 +15,32 @@ public class PlayerController : MonoBehaviour
     [Header("Pause References")]
     [SerializeField] private GameObject _pauseMenu;
     [SerializeField] private CinemachinePanTilt _panTilt;
+
+    [Header("Animation Settings")] 
+    [SerializeField] private TweenSettings _transitionSettings;
     
-    public bool IsPaused { get; private set; } = false;
+    private bool _isPaused  = false;
+    private bool _canMove = true;
     
     private IInteractable _currentInteractable;
     private IPilotable _currentPilotable;
     private IPickup _currentPickup;
     private IReceiver _currentReceiver;
     private PlayerInput _pi;
+    private PlayerAnimation _pa;
     
     public delegate void OnInteractableChanged(IInteractable newInteractable);
     public event OnInteractableChanged onInteractableChanged;
-
+    public delegate void OnStationChanged(IPilotable previousPilotable, IPilotable newPilotable);
+    public event OnStationChanged onStationChanged;
+    
     public delegate void OnPause();
     public static event OnPause onPause;
 
     private void Awake()
     {
         _pi = GetComponent<PlayerInput>();
+        _pa = GetComponent<PlayerAnimation>();
     }
     
     private void OnEnable()
@@ -61,17 +71,15 @@ public class PlayerController : MonoBehaviour
             _currentPickup = null;
         }
         
-        
-        
         Debug.Log("Trying interaction");
         if (_currentInteractable == null) return;
         Debug.Log("Interacting...");
         
         // Check for pilotable
-        if (_currentInteractable is IPilotable pilotable && pilotable.TryPilot(this))
+        if (_currentInteractable is IPilotable pilotable && pilotable.TryEnterPilot(this))
         {
             Debug.Log("Pilot successful");
-            MoveToStation(pilotable);
+            StartCoroutine(MoveToStation(pilotable));
         }
         
         // Check for pickup
@@ -102,19 +110,44 @@ public class PlayerController : MonoBehaviour
         CheckForInteractables();
     }
 
-    private void MoveToStation(IPilotable pilotable)
+    private IEnumerator MoveToStation(IPilotable pilotable)
     {
+        // Disable movement
+        _canMove = false;
+        
+        // Leave the current station
+        _currentPilotable?.LeavePilot(this);
+        if (_currentPilotable != null) _currentPilotable.onAnimationTriggered -= OnAnimationTriggered;
+        
+        // Lerp to the new station
         transform.parent = pilotable.GetPilotableData().PilotPosition;
-        transform.localPosition = Vector3.zero;
-        if (_currentPilotable != null) _currentPilotable.LeavePilot(this);
+        yield return Tween.LocalPosition(transform, Vector3.zero, _transitionSettings).ToYieldInstruction();
+        
+        // Enter the new station
         _currentPilotable = pilotable;
+        if (_currentPilotable != null) _currentPilotable.onAnimationTriggered += OnAnimationTriggered;
+        transform.localPosition = Vector3.zero;
+        
+        // Re-enable movement
+        _canMove = true;
+    }
+
+    private void OnAnimationTriggered(string animationTrigger)
+    {
+        _pa.Animate(animationTrigger);
     }
 
     private void CheckForInteractables()
     {
-        if (TryGetInteractable(out IInteractable interactable)) { }
-        else { }
-
+        if (TryGetInteractable(out IInteractable interactable))
+        {
+            
+        }
+        else
+        {
+            
+        }
+        
         if (interactable != _currentInteractable)
         {
             _currentInteractable = interactable;
@@ -147,12 +180,12 @@ public class PlayerController : MonoBehaviour
 
     public void TogglePause()
     {
-        IsPaused = !IsPaused;
+        _isPaused = !_isPaused;
 
-        _pauseMenu.SetActive(IsPaused);
-        _panTilt.enabled = !IsPaused;
+        _pauseMenu.SetActive(_isPaused);
+        _panTilt.enabled = !_isPaused;
 
-        if (!IsPaused) HideCursor();
+        if (!_isPaused) HideCursor();
         else ShowCursor();
     }
     

@@ -31,7 +31,7 @@ public class CommandStation : Station
     {
         CanMove = false;
         if (!IsStanding) _mount.Deactivate();
-        yield return Tween.LocalPosition(StationData.PilotPosition, target, settings).ToYieldInstruction();
+        yield return Tween.LocalPosition(_stationCamera.transform, target, settings).ToYieldInstruction();
         if (IsStanding) _mount.Activate(_pilot.CameraTransform);
         CanMove = true;
     }
@@ -39,14 +39,24 @@ public class CommandStation : Station
     private void StandUp()
     {
         IsStanding = true;
+        
+        // Move the camera
         StartCoroutine(MoveSequence(_standingPosition, _standUpSettings));
+        
+        // Move the player
+        AnimatePlayer("KneelUp");
     }
 
     private void SitDown()
     {
         IsStanding = false;
         _gun.OnStopFire();
+        
+        // Move the camera
         StartCoroutine(MoveSequence(_sittingPosition, _sitDownSettings));
+        
+        // Move the player
+        AnimatePlayer("KneelDown");
     }
     
     public override void OnInputRelayed(InputAction.CallbackContext context)

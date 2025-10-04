@@ -4,10 +4,16 @@ using UnityEngine.InputSystem;
 
 public interface IPilotable : IInteractable
 {
-    public bool TryPilot(PlayerController player);
+    // Methods
+    public bool TryEnterPilot(PlayerController player);
     public void LeavePilot(PlayerController player);
     public PilotableData GetPilotableData();
     public void OnInputRelayed(InputAction.CallbackContext context);
+    
+    // Delegates
+    public delegate void OnAnimationTriggered(string animationKey);
+    public event OnAnimationTriggered onAnimationTriggered;
+    
 }
 
 [Serializable]
