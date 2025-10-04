@@ -12,4 +12,5 @@ public class ValueIndicator : MonoBehaviour
         _value = value;
         _text.text = _value;
     }
+
 }

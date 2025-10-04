@@ -586,7 +586,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e9b9267883589b1479faef46cd44ba65, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _interactRange: 20
+  _interactRange: 1.75
   <CameraTransform>k__BackingField: {fileID: 3877825056966364345}
   _handTransform: {fileID: 4979042230917813552}
   _interactionMask:
@@ -2121,6 +2121,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: c27eba34888f07d4b898919c150f229d, type: 3}
       propertyPath: m_Layer
       value: 16
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: c27eba34888f07d4b898919c150f229d, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 944927156297921104, guid: c27eba34888f07d4b898919c150f229d, type: 3}
       propertyPath: m_Layer

@@ -49,7 +49,7 @@ public class TankMovement : MonoBehaviour
     private void FixedUpdate()
     {
         _rb.AddForce(transform.forward * _input.x * _currentGear.SpeedFactor * _moveSpeed * Time.fixedDeltaTime, ForceMode.VelocityChange);
-
+        
         _rb.MoveRotation(Quaternion.Euler(transform.rotation.eulerAngles + transform.up * _input.y * _turnSpeed * Time.fixedDeltaTime));
     }
 
@@ -83,7 +83,5 @@ public class TankMovement : MonoBehaviour
     private void OnMovementRelay(float moveInput, float turnInput)
     {
         _input = new Vector2(moveInput, turnInput);
-        
-        
     }
 }

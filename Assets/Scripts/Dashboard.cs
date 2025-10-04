@@ -4,9 +4,12 @@ public class Dashboard : MonoBehaviour
 {
     [SerializeField] private TankMovement _tankMovement;
 
+    [Header("Display Options")]
     [SerializeField] private ValueIndicator _speedIndicator;
     [SerializeField] private ValueIndicator _throttleIndicator;
     [SerializeField] private ValueIndicator _gearIndicator;
+    [SerializeField] private Gauge _speedGauge;
+    [SerializeField] private Gauge _throttleGauge;
     
     private void OnEnable()
     {
@@ -22,7 +25,17 @@ public class Dashboard : MonoBehaviour
         _tankMovement.onBroadcastCurrentGear -= UpdateGear;
     }
 
-    private void UpdateSpeed(float speed) => _speedIndicator.SetValue(speed.ToString("000.00"));
-    private void UpdateThrottle(float throttle) => _throttleIndicator.SetValue(throttle.ToString("000.00"));
+    private void UpdateSpeed(float speed)
+    {
+        _speedIndicator.SetValue(speed.ToString("000.00"));
+        if (_speedGauge) _speedGauge.UpdateValue(speed);
+    }
+
+    private void UpdateThrottle(float throttle)
+    {
+        _throttleIndicator.SetValue(throttle.ToString("000.00"));
+        if (_throttleGauge) _throttleGauge.UpdateValue(throttle);
+    }
+
     private void UpdateGear(Gear gear) => _gearIndicator.SetValue(gear.Type.ToString());
 }
