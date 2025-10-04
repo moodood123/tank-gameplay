@@ -13,6 +13,7 @@ public class FixedCannon : AgentController
     [SerializeField] private Transform _tiltPivot;
     [SerializeField] private Transform _aimReference;
     [SerializeField] private BoolIndicator _lifeIndicator;
+    [SerializeField] private AgentDetector _detector;
 
     [Header("Settings")] 
     [SerializeField] private float _panSpeed;
@@ -36,6 +37,16 @@ public class FixedCannon : AgentController
     private Vector3 TargetVector => (_trackingTarget.position - _aimReference.position).normalized;
     private float TargetAngle => Vector3.Angle(TargetVector, AimVector);
 
+    private void OnEnable()
+    {
+        _detector.onAgentDetectionStatusChanged += OnAgentDetected;
+    }
+
+    private void OnDisable()
+    {
+        _detector.onAgentDetectionStatusChanged -= OnAgentDetected;
+    }
+    
     protected override void Start()
     {
         base.Start();
@@ -77,6 +88,12 @@ public class FixedCannon : AgentController
         _isLoaded = false;
         yield return new WaitForSeconds(_reloadDelay);
         _isLoaded = true;
+    }
+
+    private void OnAgentDetected(AgentController agentController, bool isDetected)
+    {
+        // TODO: Add more advanced logic for picking targets
+        _trackingTarget = _detector.Agents.Count > 0 ? _detector.Agents[0].transform : null;
     }
 
     private void Fire()

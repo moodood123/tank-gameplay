@@ -10,6 +10,9 @@ public class AgentController : MonoBehaviour, IDamageable
 
     public bool IsAlive => _health > 0f;
 
+    public delegate void OnAgentDeath(AgentController agentController);
+    public event OnAgentDeath onAgentDeath;
+    
     protected virtual void Start()
     {
         _health = _maxHealth;
