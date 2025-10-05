@@ -28,8 +28,8 @@ public class AgentDetector : MonoBehaviour
         {
             if (!Agents.Contains(agent))
             {
-                onAgentDetectionStatusChanged?.Invoke(agent, true);
                 Agents.Add(agent);
+                onAgentDetectionStatusChanged?.Invoke(agent, true);
                 agent.onAgentDeath += OnAgentDeath;
             }
         }
@@ -41,8 +41,8 @@ public class AgentDetector : MonoBehaviour
         {
             if (Agents.Contains(agent))
             {
-                onAgentDetectionStatusChanged?.Invoke(agent, false);
                 Agents.Remove(agent);
+                onAgentDetectionStatusChanged?.Invoke(agent, false);
                 agent.onAgentDeath -= OnAgentDeath;
             }
         }

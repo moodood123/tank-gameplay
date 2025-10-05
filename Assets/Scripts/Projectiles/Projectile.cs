@@ -23,7 +23,6 @@ public abstract class Projectile : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        Debug.Log(other.gameObject.name);
         OnImpact(other);
     }
 
