@@ -55,7 +55,6 @@ public class FixedCannon : AgentController
     
     private IEnumerator LifeLoop()
     {
-        Debug.Log(IsAlive);
         _lifeIndicator.SetBool(IsAlive);
         
         while (IsAlive)

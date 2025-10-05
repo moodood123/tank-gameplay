@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 
 [RequireComponent(typeof(PlayerInput))]
-public class PlayerController : MonoBehaviour
+public class PlayerController : AgentController
 {
     [SerializeField] private float _interactRange = 10f;
     [field: SerializeField] public Transform CameraTransform { get; private set; }
@@ -67,25 +67,20 @@ public class PlayerController : MonoBehaviour
     {
         if (_currentPickup != null && !_currentPickup.GetGameObject().activeInHierarchy)
         {
-            Debug.LogWarning("Held item is invalid or destroyed. Clearing.");
             _currentPickup = null;
         }
         
-        Debug.Log("Trying interaction");
         if (_currentInteractable == null) return;
-        Debug.Log("Interacting...");
         
         // Check for pilotable
         if (_currentInteractable is IPilotable pilotable && pilotable.TryEnterPilot(this))
         {
-            Debug.Log("Pilot successful");
             StartCoroutine(MoveToStation(pilotable));
         }
         
         // Check for pickup
         if (_currentInteractable is IPickup item && _currentPickup == null && item.TryPickup(_handTransform, out item))
         {
-            Debug.Log("Pickup successful");
             _currentPickup = item;
         }
         
@@ -94,12 +89,10 @@ public class PlayerController : MonoBehaviour
         {
             if (_currentPickup != null && receiver.IsItemCompatible(_currentPickup) && receiver.TryPlaceItem(_currentPickup))
             {
-                Debug.Log("Placement successful");
                 _currentPickup = null;
             }
             else if (_currentPickup == null && receiver.TryCollectItem(_handTransform, out IPickup potential))
             {
-                Debug.Log("Pickup successful");
                 _currentPickup = potential;
             }
         }

@@ -20,6 +20,7 @@ public class AgentController : MonoBehaviour, IDamageable
     
     public void TakeDamage(float damage)
     {
+        Debug.Log("TakeDamage");
         if (!IsAlive) return;
         
         _health -= damage;
