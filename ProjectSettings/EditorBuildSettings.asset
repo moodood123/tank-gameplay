@@ -6,6 +6,18 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
+    path: Assets/Scenes/Main/Main_Title.unity
+    guid: 7256a872de0502c4c8766e5369fc56aa
+  - enabled: 1
+    path: Assets/Scenes/Main/Main.unity
+    guid: 44ecd0e32ae87474db10a4bb991d61ca
+  - enabled: 1
+    path: Assets/Scenes/Main/Main_Lighting.unity
+    guid: 53cb6ca651c1a50438d29ef9980587b5
+  - enabled: 1
+    path: Assets/Scenes/Demo/Demo.unity
+    guid: 4aa341859070bf94d9e7092520b9b379
+  - enabled: 1
     path: Assets/Scenes/Gym/Gym_Controls.unity
     guid: 99c9720ab356a0642a771bea13969a05
   m_configObjects:
