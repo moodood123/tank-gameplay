@@ -15,7 +15,7 @@ EditorBuildSettings:
     path: Assets/Scenes/Main/Main_Lighting.unity
     guid: 53cb6ca651c1a50438d29ef9980587b5
   - enabled: 1
-    path: Assets/Scenes/Demo/Demo.unity
+    path: Assets/Scenes/Main/Main_Characters.unity
     guid: 4aa341859070bf94d9e7092520b9b379
   - enabled: 1
     path: Assets/Scenes/Gym/Gym_Controls.unity

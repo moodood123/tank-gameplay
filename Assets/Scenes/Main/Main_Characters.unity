@@ -497,10 +497,6 @@ PrefabInstance:
       propertyPath: m_LocalPosition.y
       value: -0.5
       objectReference: {fileID: 0}
-    - target: {fileID: 7030921038001850776, guid: bc4b99ea8969c9c4f978f0d6e58f20b1, type: 3}
-      propertyPath: _onInteract.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: OnStartFire
-      objectReference: {fileID: 0}
     - target: {fileID: 7436710779010289516, guid: bc4b99ea8969c9c4f978f0d6e58f20b1, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0

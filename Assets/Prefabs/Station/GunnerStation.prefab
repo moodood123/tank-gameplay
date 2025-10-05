@@ -625,7 +625,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2066748557921139653, guid: 403302225e98efc4f87c0305897e9a62, type: 3}
       propertyPath: _onInteract.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: 
+      value: OnStartFire
       objectReference: {fileID: 0}
     - target: {fileID: 2066748557921139653, guid: 403302225e98efc4f87c0305897e9a62, type: 3}
       propertyPath: _onInteract.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName

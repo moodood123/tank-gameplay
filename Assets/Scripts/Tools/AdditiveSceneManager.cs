@@ -44,14 +44,17 @@ public class AdditiveSceneManager : MonoBehaviour
     public void Load()
     {
 #if UNITY_EDITOR
-        foreach (SceneAsset scene in _sceneList)
+        if (!EditorApplication.isPlaying)
         {
-            if (!scene) continue;
+            foreach (SceneAsset scene in _sceneList)
+            {
+                if (!scene) continue;
 
-            string path = AssetDatabase.GetAssetPath(scene);
-            if (!string.IsNullOrEmpty(path)) EditorSceneManager.OpenScene(path, OpenSceneMode.Additive);
+                string path = AssetDatabase.GetAssetPath(scene);
+                if (!string.IsNullOrEmpty(path)) EditorSceneManager.OpenScene(path, OpenSceneMode.Additive);
+            }
+            return;
         }
-        return;
 #endif
         foreach (string sceneName in _sceneNameList)
         {
