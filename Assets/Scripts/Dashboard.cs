@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class Dashboard : MonoBehaviour
 {
-    [SerializeField] private TankMovement _tankMovement;
+    [SerializeField] private TankController _tankController;
 
     [Header("Display Options")]
     [SerializeField] private ValueIndicator _speedIndicator;
@@ -13,16 +13,16 @@ public class Dashboard : MonoBehaviour
     
     private void OnEnable()
     {
-        _tankMovement.onBroadcastSpeed += UpdateSpeed;
-        _tankMovement.onBroadcastThrottle += UpdateThrottle;
-        _tankMovement.onBroadcastCurrentGear += UpdateGear;
+        _tankController.onBroadcastSpeed += UpdateSpeed;
+        _tankController.onBroadcastThrottle += UpdateThrottle;
+        _tankController.onBroadcastCurrentGear += UpdateGear;
     }
 
     private void OnDisable()
     {
-        _tankMovement.onBroadcastSpeed -= UpdateSpeed;
-        _tankMovement.onBroadcastThrottle -= UpdateThrottle;
-        _tankMovement.onBroadcastCurrentGear -= UpdateGear;
+        _tankController.onBroadcastSpeed -= UpdateSpeed;
+        _tankController.onBroadcastThrottle -= UpdateThrottle;
+        _tankController.onBroadcastCurrentGear -= UpdateGear;
     }
 
     private void UpdateSpeed(float speed)

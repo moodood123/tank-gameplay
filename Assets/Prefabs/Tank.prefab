@@ -1076,6 +1076,10 @@ PrefabInstance:
       propertyPath: _tankMovement
       value: 
       objectReference: {fileID: 2326010145115706159}
+    - target: {fileID: 9101118800972024983, guid: 0c0ff1e398fe9e04b884101e330e0fdd, type: 3}
+      propertyPath: _tankController
+      value: 
+      objectReference: {fileID: 2326010145115706159}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

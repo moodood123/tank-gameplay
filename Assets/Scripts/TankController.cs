@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody))]
-public class TankMovement : MonoBehaviour
+public class TankController : MonoBehaviour
 {
     [SerializeField] private DriverStation _driverStation;
     [SerializeField] private float _turnSpeed;
@@ -42,8 +42,8 @@ public class TankMovement : MonoBehaviour
 
     private void Update()
     {
-        onBroadcastSpeed(_rb.linearVelocity.magnitude);
-        onBroadcastThrottle(_input.x);
+        onBroadcastSpeed?.Invoke(_rb.linearVelocity.magnitude);
+        onBroadcastThrottle?.Invoke(_input.x);
     }
 
     private void FixedUpdate()

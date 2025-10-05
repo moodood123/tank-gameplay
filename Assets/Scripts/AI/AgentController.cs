@@ -18,7 +18,7 @@ public class AgentController : MonoBehaviour, IDamageable
         _health = _maxHealth;
     }
     
-    public void TakeDamage(float damage)
+    public void TakeDamage(float damage, DamageType type)
     {
         Debug.Log("TakeDamage");
         if (!IsAlive) return;

@@ -20,7 +20,7 @@ public class TestTarget : MonoBehaviour, IDamageable
         Health = _maxHealth;
     }
 
-    public void TakeDamage(float damage)
+    public void TakeDamage(float damage, DamageType type)
     {
         if (!IsAlive) return;
         Health -= damage;
