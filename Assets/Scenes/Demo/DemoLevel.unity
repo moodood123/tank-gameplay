@@ -19422,7 +19422,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 5647126092718089, guid: 64f4a778d0fee524ea1b54d0206012ec, type: 3}
       propertyPath: m_Name
-      value: Trigger
+      value: Trigger_CollapseBridge
       objectReference: {fileID: 0}
     - target: {fileID: 1928712595754176107, guid: 64f4a778d0fee524ea1b54d0206012ec, type: 3}
       propertyPath: _onTriggerEnter.m_PersistentCalls.m_Calls.Array.size
