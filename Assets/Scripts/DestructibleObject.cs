@@ -14,7 +14,6 @@ public class DestructibleObject : MonoBehaviour
     public void Break()
     {
         _wholeObject.SetActive(false);
-
         _brokenInstance = Instantiate(_brokenObject, _brokenObject.transform.parent);
         _brokenInstance.SetActive(true);
     }
