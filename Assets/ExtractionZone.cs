@@ -1,12 +1,16 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Events;
+using UnityEngine.SceneManagement;
 
 public class ExtractionZone : MonoBehaviour
 {
     [Header("Settings")]
     [SerializeField] private float _extractionDelay;
+    
+    [Header("Scene Settings")]
+    [SerializeField] private string _sceneName;
+    [SerializeField] private bool _loadSceneOnExtract;
     
     private Dictionary<TankController, Coroutine> _tankExtractionTimers = new Dictionary<TankController, Coroutine>();
     
@@ -44,6 +48,12 @@ public class ExtractionZone : MonoBehaviour
         Debug.Log("Extracted tank: " + tank.transform.name);
         onTankExtractionComplete?.Invoke(tank);
         _tankExtractionTimers?.Remove(tank);
+
+        if (_loadSceneOnExtract)
+        {
+            if (SceneTransitionHandler.Instance) SceneTransitionHandler.Instance.ChangeScene(_sceneName);
+            else SceneManager.LoadScene(_sceneName);
+        }
     }
 
     private IEnumerator ExtractionTimer(TankController tank)

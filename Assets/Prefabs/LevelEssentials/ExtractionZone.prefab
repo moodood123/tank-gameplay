@@ -47,6 +47,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _extractionDelay: 5
+  _sceneName: Main_ResultScreen
+  _loadSceneOnExtract: 1
 --- !u!65 &4985917290731044872
 BoxCollider:
   m_ObjectHideFlags: 0
