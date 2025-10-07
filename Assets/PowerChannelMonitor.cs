@@ -20,9 +20,6 @@ public class PowerChannelMonitor : MonoBehaviour
         while (true)
         {
             yield return null;
-            Debug.Log("Engine: " + _relay.PowerRatios[PowerChannel.Engine]);
-            Debug.Log("Lighting: " + _relay.PowerRatios[PowerChannel.Lighting]);
-            Debug.Log("Turret: " + _relay.PowerRatios[PowerChannel.Turret]);
             foreach (var pairing in _pairings)
             {
                 pairing.FillImage.fillAmount = _relay.PowerRatios[pairing.Channel];

@@ -21,7 +21,6 @@ public class PeriscopeRelay : MonoBehaviour
         }
         else
         {
-            Debug.Log("Adding new input module");
             Relay.Add(index, input);
         }
     }

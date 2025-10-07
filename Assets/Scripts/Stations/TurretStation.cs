@@ -4,8 +4,10 @@ using UnityEngine.InputSystem;
 public class GunnerStation : Station
 {
     [SerializeField] private Turret _turret;
-    
+    [SerializeField] private PowerRelay _relay;
+
     [Header("Settings")] 
+    [SerializeField] private PowerChannel _channel;
     [SerializeField] private Vector2 _turretSpeed = new Vector2();
     [SerializeField] private Vector2 _tiltConstraints = new Vector2();
     [SerializeField] private Vector2 _panConstraints = new Vector2();
@@ -28,9 +30,11 @@ public class GunnerStation : Station
 
     private void HandleInput()
     {
+        if (_relay.PowerRatios[_channel] <= 0f) return;
+        
         float x = _turretRotation.x + _moveInput.x * _turretSpeed.x * Time.deltaTime;
         float y = _turretRotation.y + _moveInput.y * _turretSpeed.y * Time.deltaTime;
-
+        
         if (x < _tiltConstraints.x)
             x = _wrapXRotation ? _tiltConstraints.y : _tiltConstraints.x;
         else if (x > _tiltConstraints.y)
@@ -46,7 +50,6 @@ public class GunnerStation : Station
     
     public override void OnInputRelayed(InputAction.CallbackContext context)
     {
-        
         switch (context.action.name)
         {
             case "Move":
