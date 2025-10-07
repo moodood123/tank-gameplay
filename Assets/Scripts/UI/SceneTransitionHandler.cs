@@ -1,5 +1,6 @@
 using System.Collections;
 using PrimeTween;
+using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -42,6 +43,11 @@ public class SceneTransitionHandler : MonoBehaviour
         _isSceneLoadInProgress = true;
         yield return Tween.Alpha(_fadePanel, settings).ToYieldInstruction();
         _isSceneLoadInProgress = false;
-        if (sceneToLoad != null) SceneManager.LoadScene(sceneToLoad);
+
+        if (sceneToLoad != null)
+        {
+            if (NetworkManager.Singleton) NetworkManager.Singleton.SceneManager.LoadScene(sceneToLoad, LoadSceneMode.Single);
+            else SceneManager.LoadScene(sceneToLoad);
+        }
     }
 }

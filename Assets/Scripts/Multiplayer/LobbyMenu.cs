@@ -11,22 +11,66 @@ public class LobbyMenu : MonoBehaviour
     [SerializeField] private Button _joinCodeButton;
     [SerializeField] private Button _startGameButton;
 
-    [SerializeField] private GameObject _PresessionPanel;
-    [SerializeField] private GameObject _SessionPanel;
+    [SerializeField] private GameObject _presessionPanel;
+    [SerializeField] private GameObject _sessionPanel;
 
     private void OnEnable()
     {
         _joinCodeInputField.onValueChanged.AddListener(OnInputChanged);
+        NetworkManager.Singleton.OnServerStarted += OnServerStarted;
+        NetworkManager.Singleton.OnServerStopped += OnServerStopped;
+        NetworkManager.Singleton.OnClientStarted += OnClientStarted;
+        NetworkManager.Singleton.OnServerStopped += OnClientStopped;
     }
 
     private void OnDisable()
     {
         _joinCodeInputField.onValueChanged.RemoveListener(OnInputChanged);
+        NetworkManager.Singleton.OnServerStarted -= OnServerStarted;
+        NetworkManager.Singleton.OnServerStopped -= OnServerStopped;
+        NetworkManager.Singleton.OnClientStarted -= OnClientStarted;
+        NetworkManager.Singleton.OnClientStopped -= OnClientStopped;
     }
 
     private void Start()
     {
         _joinCodeButton.interactable = false;
+    }
+    
+    private void OnServerStarted()
+    {
+        if (NetworkManager.Singleton.IsHost)
+        {
+            _presessionPanel.SetActive(false);
+            _sessionPanel.SetActive(true);
+        }
+    }
+
+    private void OnServerStopped(bool _)
+    {
+        if (NetworkManager.Singleton.IsHost)
+        {
+            _presessionPanel.SetActive(true);
+            _sessionPanel.SetActive(false);
+        }
+    }
+
+    private void OnClientStarted()
+    {
+        if (NetworkManager.Singleton.IsClient)
+        {
+            _presessionPanel.SetActive(false);
+            _sessionPanel.SetActive(true);
+        }
+    }
+
+    private void OnClientStopped(bool _)
+    {
+        if (NetworkManager.Singleton.IsClient)
+        {
+            _presessionPanel.SetActive(true);
+            _sessionPanel.SetActive(false);
+        }
     }
 
     private void OnInputChanged(string code)

@@ -11,12 +11,7 @@ public static class LevelManager
     public static void SetCurrentLevelData(LevelData levelData)
     {
         CurrentLevelData = levelData;
-        OnLevelSelected?.Invoke();
-    }
-    
-    public static void VoidCurrentLevelData()
-    {
-        CurrentLevelData = null;
-        OnLevelDeselected?.Invoke();
+        if (CurrentLevelData) OnLevelSelected?.Invoke();
+        else OnLevelDeselected?.Invoke();
     }
 }
