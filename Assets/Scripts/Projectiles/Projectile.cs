@@ -7,6 +7,7 @@ public abstract class Projectile : MonoBehaviour
     [SerializeField] protected float _speed;
     [SerializeField] protected float _cleanupDelay;
     [SerializeField] protected LayerMask _contactMask;
+    [SerializeField] protected DamageType _damageType;
     
     private Rigidbody _rb;
     
@@ -27,7 +28,10 @@ public abstract class Projectile : MonoBehaviour
         OnImpact(other);
     }
 
-    protected virtual void OnImpact(Collider contact) { }
+    protected virtual void OnImpact(Collider contact)
+    {
+        Debug.Log("OnImpact: " + contact.gameObject.name);
+    }
 
     private IEnumerator Lifespan()
     {

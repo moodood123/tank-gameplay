@@ -33,14 +33,14 @@ public class Cannon : Gun
     {
         if (IsLoaded)
         {
-            Fire();
+            Fire(_loader.CurrentShell.ProjectilePrefab);
             _impulseSource.GenerateImpulse(_camImpulseForce);
             _shotEffect.SendEvent("OnFire");
             StartCoroutine(RecoilSequence());
         }
         else if (debugFire)
         {
-            Fire();
+            Fire(_projectile);
             _shotEffect.SendEvent("OnFire");
             StartCoroutine(RecoilSequence());
         }

@@ -2,13 +2,13 @@ using UnityEngine;
 
 public class CannonLoader : ItemReceiver
 {
-    private ShellItem _currentShell => _currentItem as ShellItem;
+    public ShellItem CurrentShell => _currentItem as ShellItem;
 
-    public bool IsLoaded => _currentShell != null;
+    public bool IsLoaded => CurrentShell != null;
     
     public void EjectSpentShell()
     {
-        if (_currentShell) _currentShell.Spend();
+        if (CurrentShell) CurrentShell.Spend();
         _currentItem = null;
     }
     

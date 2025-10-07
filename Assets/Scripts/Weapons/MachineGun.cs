@@ -20,7 +20,7 @@ public class MachineGun : Gun
         yield return new WaitForSeconds(_startDelay);
         while (true)
         {
-            Fire();
+            Fire(_projectile);
             //EjectCasing();
             yield return new WaitForSeconds(_shotInterval);
             yield return null;

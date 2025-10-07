@@ -6,6 +6,7 @@ public class ShellItem : Item
 {
     [SerializeField] private GameObject _liveMesh;
     [SerializeField] private GameObject _physicalCollider;
+    [field: SerializeField] public GameObject ProjectilePrefab { get; private set; }
     [SerializeField] private Collider _interactTrigger;
     [SerializeField] private float _ejectionForce;
 

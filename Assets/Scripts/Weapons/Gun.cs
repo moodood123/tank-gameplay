@@ -2,7 +2,7 @@ using UnityEngine;
 
 public abstract class Gun : MonoBehaviour
 {
-    [SerializeField] private GameObject _projectile;
+    [SerializeField] protected GameObject _projectile;
     [SerializeField] private Transform _spawnPoint;
 
     public bool IsFiring { get; private set; } = false;
@@ -19,9 +19,9 @@ public abstract class Gun : MonoBehaviour
         IsFiring = false;
     }
     
-    protected void Fire()
+    protected void Fire(GameObject projectilePrefab)
     {
-        GameObject go = Instantiate(_projectile.gameObject, _spawnPoint.position, _spawnPoint.rotation);
+        GameObject go = Instantiate(projectilePrefab.gameObject, _spawnPoint.position, _spawnPoint.rotation);
         if (go.TryGetComponent(out Projectile projectile))
         {
             projectile.Fire();
