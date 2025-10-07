@@ -26,10 +26,14 @@ public class LobbyMenu : MonoBehaviour
     private void OnDisable()
     {
         _joinCodeInputField.onValueChanged.RemoveListener(OnInputChanged);
-        NetworkManager.Singleton.OnServerStarted -= OnServerStarted;
-        NetworkManager.Singleton.OnServerStopped -= OnServerStopped;
-        NetworkManager.Singleton.OnClientStarted -= OnClientStarted;
-        NetworkManager.Singleton.OnClientStopped -= OnClientStopped;
+
+        if (NetworkManager.Singleton)
+        {
+            NetworkManager.Singleton.OnServerStarted -= OnServerStarted;
+            NetworkManager.Singleton.OnServerStopped -= OnServerStopped;
+            NetworkManager.Singleton.OnClientStarted -= OnClientStarted;
+            NetworkManager.Singleton.OnClientStopped -= OnClientStopped;
+        }
     }
 
     private void Start()
