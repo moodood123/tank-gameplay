@@ -1,3 +1,4 @@
+using PrimeTween;
 using UnityEngine;
 
 public class CursorInitializer : MonoBehaviour

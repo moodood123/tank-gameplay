@@ -1,8 +1,9 @@
 using Unity.Cinemachine;
+using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class Station : MonoBehaviour, IPilotable
+public class Station : NetworkBehaviour, IPilotable
 {
     [field: SerializeField] public string StationName { get; private set; }
     [field: SerializeField] public PilotableData StationData { get; private set; }

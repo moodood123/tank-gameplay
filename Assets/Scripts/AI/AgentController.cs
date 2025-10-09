@@ -1,6 +1,7 @@
+using Unity.Netcode;
 using UnityEngine;
 
-public class AgentController : MonoBehaviour, IDamageable
+public class AgentController : NetworkBehaviour, IDamageable
 {
     [field: SerializeField] public Team AgentTeam { get; private set; }
     

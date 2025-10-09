@@ -1,6 +1,7 @@
 using System.Collections;
 using PrimeTween;
 using Unity.Cinemachine;
+using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -11,6 +12,7 @@ public class PlayerController : AgentController
     [field: SerializeField] public Transform CameraTransform { get; private set; }
     [SerializeField] private Transform _handTransform;
     [SerializeField] private LayerMask _interactionMask;
+    [SerializeField] private Transform _virtualParent;
 
     [Header("Pause References")]
     [SerializeField] private GameObject _pauseMenu;
@@ -26,8 +28,10 @@ public class PlayerController : AgentController
     private IPilotable _currentPilotable;
     private IPickup _currentPickup;
     private IReceiver _currentReceiver;
+    
     private PlayerInput _pi;
     private PlayerAnimation _pa;
+    private NetworkObject _no;
     
     public delegate void OnInteractableChanged(IInteractable newInteractable);
     public event OnInteractableChanged onInteractableChanged;
@@ -41,6 +45,7 @@ public class PlayerController : AgentController
     {
         _pi = GetComponent<PlayerInput>();
         _pa = GetComponent<PlayerAnimation>();
+        _no = GetComponent<NetworkObject>();
     }
     
     private void OnEnable()
@@ -53,14 +58,19 @@ public class PlayerController : AgentController
         _pi.onActionTriggered -= OnInputReceived;
     }
 
-    private void Start()
+    protected override void Start()
     {
+        base.Start();
         HideCursor();
+        if (_virtualParent.parent == transform) _virtualParent.parent = null;
     }
 
     private void Update()
     {
         CheckForInteractables();
+
+        transform.position = _virtualParent.position;
+        transform.rotation = _virtualParent.rotation;
     }
 
     private void TryInteract()
@@ -103,6 +113,18 @@ public class PlayerController : AgentController
         CheckForInteractables();
     }
 
+    public bool Initialize(IPilotable pilotable)
+    {
+        bool succeeded = pilotable.TryEnterPilot(this);
+
+        if (succeeded)
+        {
+            StartCoroutine(MoveToStation(pilotable));
+        }
+
+        return succeeded;
+    }
+
     private IEnumerator MoveToStation(IPilotable pilotable)
     {
         // Disable movement
@@ -113,13 +135,14 @@ public class PlayerController : AgentController
         if (_currentPilotable != null) _currentPilotable.onAnimationTriggered -= OnAnimationTriggered;
         
         // Lerp to the new station
-        transform.parent = pilotable.GetPilotableData().PilotPosition;
-        yield return Tween.LocalPosition(transform, Vector3.zero, _transitionSettings).ToYieldInstruction();
+        //transform.parent = pilotable.GetPilotableData().PilotPosition;
+        _virtualParent.parent = pilotable.GetPilotableData().PilotPosition;
+        yield return Tween.LocalPosition(_virtualParent, Vector3.zero, _transitionSettings).ToYieldInstruction();
         
         // Enter the new station
         _currentPilotable = pilotable;
         if (_currentPilotable != null) _currentPilotable.onAnimationTriggered += OnAnimationTriggered;
-        transform.localPosition = Vector3.zero;
+        _virtualParent.localPosition = Vector3.zero;
         
         // Re-enable movement
         _canMove = true;
@@ -132,14 +155,8 @@ public class PlayerController : AgentController
 
     private void CheckForInteractables()
     {
-        if (TryGetInteractable(out IInteractable interactable))
-        {
-            
-        }
-        else
-        {
-            
-        }
+        if (TryGetInteractable(out IInteractable interactable)) { }
+        else { }
         
         if (interactable != _currentInteractable)
         {

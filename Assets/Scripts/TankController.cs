@@ -1,8 +1,9 @@
 using System.Collections.Generic;
+using Unity.Netcode;
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody))]
-public class TankController : MonoBehaviour
+public class TankController : NetworkBehaviour
 {
     [SerializeField] private DriverStation _driverStation;
     [SerializeField] private float _turnSpeed;

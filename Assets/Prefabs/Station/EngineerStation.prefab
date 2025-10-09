@@ -191,6 +191,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2275907095328506489}
   - component: {fileID: 3322867316815570418}
+  - component: {fileID: 8343406758040524429}
   - component: {fileID: 1441348140176994700}
   m_Layer: 9
   m_Name: EngineerStation
@@ -242,6 +243,31 @@ SphereCollider:
   serializedVersion: 3
   m_Radius: 0.5
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &8343406758040524429
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6720138083897019154}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  GlobalObjectIdHash: 3218674552
+  InScenePlacedSourceGlobalObjectIdHash: 0
+  DeferredDespawnTick: 0
+  Ownership: 1
+  AlwaysReplicateAsRoot: 0
+  SynchronizeTransform: 1
+  ActiveSceneSynchronization: 0
+  SceneMigrationSynchronization: 0
+  SpawnWithObservers: 1
+  DontDestroyWithOwner: 0
+  AutoObjectParentSync: 1
+  SyncOwnerTransformWhenParented: 1
+  AllowOwnerToParent: 0
 --- !u!114 &1441348140176994700
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -254,9 +280,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ec1b5743d0addbd4e8ad088f1c11c2ce, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ShowTopMostFoldoutHeaderGroup: 1
   <StationName>k__BackingField: Engineer
   <StationData>k__BackingField:
-    <PilotPosition>k__BackingField: {fileID: 2686061093487295584}
+    <PilotPosition>k__BackingField: {fileID: 2275907095328506489}
   _stationCamera: {fileID: 454485068550724156}
   _powerRelay: {fileID: 0}
 --- !u!1 &8295641350704206328
