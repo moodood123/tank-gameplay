@@ -10,7 +10,6 @@ public class Shell : Projectile
     {
         base.OnImpact(contact);
         if (contact.TryGetComponent(out IDamageable damageable)) damageable.TakeDamage(_impactDamage, _damageType);
-        Debug.LogWarning("OnImpact: " + contact.gameObject.name);
         
         Collider[] colliders = Physics.OverlapSphere(transform.position, _explosionRadius, _contactMask);
         foreach (Collider collider in colliders)

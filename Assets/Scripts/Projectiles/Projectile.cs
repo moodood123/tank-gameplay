@@ -24,14 +24,10 @@ public abstract class Projectile : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        Debug.Log("OnTriggerEnter: " + other.gameObject.name);
         OnImpact(other);
     }
 
-    protected virtual void OnImpact(Collider contact)
-    {
-        Debug.Log("OnImpact: " + contact.gameObject.name);
-    }
+    protected virtual void OnImpact(Collider contact) { }
 
     private IEnumerator Lifespan()
     {
