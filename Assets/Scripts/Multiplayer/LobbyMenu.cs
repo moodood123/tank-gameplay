@@ -72,8 +72,8 @@ public class LobbyMenu : MonoBehaviour
     {
         if (NetworkManager.Singleton.IsClient)
         {
-            _presessionPanel.SetActive(true);
-            _sessionPanel.SetActive(false);
+            if (_presessionPanel) _presessionPanel.SetActive(true);
+            if (_sessionPanel) _sessionPanel.SetActive(false);
         }
     }
 
