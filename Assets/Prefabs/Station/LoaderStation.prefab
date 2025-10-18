@@ -193,7 +193,7 @@ GameObject:
   - component: {fileID: 1154978664004214752}
   - component: {fileID: 1768546843699859936}
   m_Layer: 9
-  m_Name: Sphere
+  m_Name: PilotPosition
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -365,7 +365,7 @@ MonoBehaviour:
   ShowTopMostFoldoutHeaderGroup: 1
   <StationName>k__BackingField: Loader
   <StationData>k__BackingField:
-    <PilotPosition>k__BackingField: {fileID: 7449233876819963363}
+    <PilotPosition>k__BackingField: {fileID: 2463653270804260677}
   _stationCamera: {fileID: 1936193861175427716}
 --- !u!1001 &6871990590471138121
 PrefabInstance:

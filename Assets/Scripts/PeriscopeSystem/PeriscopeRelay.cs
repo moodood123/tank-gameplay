@@ -63,6 +63,12 @@ public static class RenderQueue
 
 public enum PeriscopeIndex
 {
-    Gunner,
-    Driver
+    FrontTurret,
+    RearTurret,
+    LeftTurret,
+    RightTurret,
+    FrontBody,
+    RearBody,
+    LeftBody,
+    RightBody
 }

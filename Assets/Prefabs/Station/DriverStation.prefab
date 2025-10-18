@@ -103,7 +103,7 @@ MonoBehaviour:
   ShowTopMostFoldoutHeaderGroup: 1
   <StationName>k__BackingField: Driver
   <StationData>k__BackingField:
-    <PilotPosition>k__BackingField: {fileID: 5926942453703232370}
+    <PilotPosition>k__BackingField: {fileID: 1040119319160231614}
   _stationCamera: {fileID: 5207120981301033100}
   _moveThrottleAcceleration: 6
   _moveThrottleDecay: 6
@@ -304,7 +304,7 @@ GameObject:
   - component: {fileID: 7731152625991660682}
   - component: {fileID: 8065682735924891667}
   m_Layer: 0
-  m_Name: Sphere
+  m_Name: PilotPosition
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1094,6 +1094,10 @@ PrefabInstance:
     - target: {fileID: 8047315633511874751, guid: b3840b2076c6a2d44ae0ab567d53cd5f, type: 3}
       propertyPath: _index
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8047315633511874751, guid: b3840b2076c6a2d44ae0ab567d53cd5f, type: 3}
+      propertyPath: _initialIndex
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 8929887268721660528, guid: b3840b2076c6a2d44ae0ab567d53cd5f, type: 3}
       propertyPath: m_LocalPosition.x

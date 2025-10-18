@@ -48,7 +48,6 @@ public class DriverStation : Station
                 _turnThrottle += _turnThrottleDecay * Time.deltaTime;
             }
         }
-        
         _turnThrottle = Mathf.Clamp(_turnThrottle, _turnThrottleRange.x, _turnThrottleRange.y);
         
         onMovementRelay?.Invoke(_moveThrottle, _turnThrottle);

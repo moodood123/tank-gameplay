@@ -97,7 +97,7 @@ MonoBehaviour:
   ShowTopMostFoldoutHeaderGroup: 1
   <StationName>k__BackingField: Aux
   <StationData>k__BackingField:
-    <PilotPosition>k__BackingField: {fileID: 5613142914115131880}
+    <PilotPosition>k__BackingField: {fileID: 6719743051138396849}
   _stationCamera: {fileID: 5365453895511943723}
 --- !u!1 &2938190481658548456
 GameObject:
@@ -111,7 +111,7 @@ GameObject:
   - component: {fileID: 6142818464102138055}
   - component: {fileID: 1119080386792270741}
   m_Layer: 9
-  m_Name: Sphere
+  m_Name: PilotPosition
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

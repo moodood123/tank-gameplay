@@ -37,9 +37,6 @@ public class PlayerController : AgentController
     public event OnInteractableChanged onInteractableChanged;
     public delegate void OnStationChanged(IPilotable previousPilotable, IPilotable newPilotable);
     public event OnStationChanged onStationChanged;
-    
-    public delegate void OnPause();
-    public static event OnPause onPause;
 
     private void Awake()
     {

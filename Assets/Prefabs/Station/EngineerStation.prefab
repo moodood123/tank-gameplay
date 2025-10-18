@@ -283,7 +283,7 @@ MonoBehaviour:
   ShowTopMostFoldoutHeaderGroup: 1
   <StationName>k__BackingField: Engineer
   <StationData>k__BackingField:
-    <PilotPosition>k__BackingField: {fileID: 2275907095328506489}
+    <PilotPosition>k__BackingField: {fileID: 2686061093487295584}
   _stationCamera: {fileID: 454485068550724156}
   _powerRelay: {fileID: 0}
 --- !u!1 &8295641350704206328
