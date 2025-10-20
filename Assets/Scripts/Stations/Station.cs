@@ -12,12 +12,14 @@ public class Station : NetworkBehaviour, IPilotable
     
     protected PlayerController _pilot;
     protected Collider _collider;
+    protected NetworkObject _no;
     
     public event IPilotable.OnAnimationTriggered onAnimationTriggered;
 
     private void Awake()
     {
         _collider = GetComponent<Collider>();
+        _no = GetComponent<NetworkObject>();
     }
     
     public bool TryEnterPilot(PlayerController player)

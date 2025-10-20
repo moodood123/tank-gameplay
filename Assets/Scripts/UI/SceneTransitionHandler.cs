@@ -35,7 +35,7 @@ public class SceneTransitionHandler : MonoBehaviour
 
     public void ChangeScene(string sceneName)
     {
-        StartCoroutine(FadeSequence(_fadeOutSettings, sceneName));
+        if (!_isSceneLoadInProgress) StartCoroutine(FadeSequence(_fadeOutSettings, sceneName));
     }
 
     private IEnumerator FadeSequence(TweenSettings<float> settings, string sceneToLoad = null)

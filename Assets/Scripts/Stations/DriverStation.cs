@@ -1,4 +1,5 @@
 using System;
+using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -17,7 +18,7 @@ public class DriverStation : Station
     private float _turnThrottle;
 
     private Vector2 _moveInput = new Vector2();
-    private bool _isClutchIn = false;
+    private bool _isClutchIn;
 
     public delegate void OnInputRelay(float moveThrottle, float turnThrottle);
     public event OnInputRelay onMovementRelay;
@@ -32,6 +33,13 @@ public class DriverStation : Station
     
     private void Update()
     {
+        HandleMotion();
+    }
+
+    private void HandleMotion()
+    {
+        if (!IsOwner) return;
+        
         _moveThrottle += _moveInput.y * _moveThrottleAcceleration * Time.deltaTime;
         if (_moveInput.y == 0f) _moveThrottle -= _moveThrottleDecay * Time.deltaTime;
         _moveThrottle = Mathf.Clamp(_moveThrottle, _moveThrottleRange.x, _moveThrottleRange.y);
@@ -50,23 +58,42 @@ public class DriverStation : Station
         }
         _turnThrottle = Mathf.Clamp(_turnThrottle, _turnThrottleRange.x, _turnThrottleRange.y);
         
-        onMovementRelay?.Invoke(_moveThrottle, _turnThrottle);
+        // TODO: Add options for relaying input in single-player context
+        HandleMotionServerRpc(_moveThrottle, _turnThrottle);
+        //onMovementRelay?.Invoke(_moveThrottle, _turnThrottle);
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    private void HandleMotionServerRpc(float moveThrottle, float turnThrottle)
+    {
+        onMovementRelay?.Invoke(moveThrottle, turnThrottle);
     }
 
     private void TryChangeGear(GearType newGearType)
     {
         if (_isClutchIn)
         {
-            onChangeGear?.Invoke(newGearType);
+            // TODO: Add options for relaying input in single-player context
+
+            int newGearTypeIndex = (int)newGearType;
+            TryChangeGearServerRpc(newGearTypeIndex);
         }
-        else
-        {
-            Debug.LogWarning("Can't change gear");
-        }
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    private void TryChangeGearServerRpc(int newGearTypeIndex)
+    {
+        GearType newGearType = GearType.N;
+        if (Enum.IsDefined(typeof(GearType), newGearTypeIndex)) newGearType = (GearType)newGearTypeIndex;
+        else Debug.LogError("Invalid Gear Type");
+
+        onChangeGear?.Invoke(newGearType);
     }
     
     public override void OnInputRelayed(InputAction.CallbackContext context)
     {
+        Debug.Log("<color=green>Input Received</color>");
+        
         switch (context.action.name)
         {
             case "Move":

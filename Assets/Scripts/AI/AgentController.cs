@@ -27,8 +27,11 @@ public class AgentController : NetworkBehaviour, IDamageable
         _health -= damage;
         if (!IsAlive) Die();
     }
-    
-    protected virtual void Die() { }
+
+    protected virtual void Die()
+    {
+        onAgentDeath?.Invoke(this);
+    }
 }
 
 public enum Team

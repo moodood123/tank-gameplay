@@ -35,8 +35,6 @@ public class PlayerController : AgentController
     
     public delegate void OnInteractableChanged(IInteractable newInteractable);
     public event OnInteractableChanged onInteractableChanged;
-    public delegate void OnStationChanged(IPilotable previousPilotable, IPilotable newPilotable);
-    public event OnStationChanged onStationChanged;
 
     private void Awake()
     {
@@ -80,7 +78,7 @@ public class PlayerController : AgentController
         if (_currentInteractable == null) return;
         
         // Check for pilotable
-        if (_currentInteractable is IPilotable pilotable && pilotable.TryEnterPilot(this))
+        if (_currentInteractable is IPilotable pilotable && _canMove && pilotable.TryEnterPilot(this))
         {
             StartCoroutine(MoveToStation(pilotable));
         }
