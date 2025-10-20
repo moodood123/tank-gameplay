@@ -1,11 +1,9 @@
 using System;
 using System.Collections.Generic;
-using NUnit.Framework;
 using Unity.Netcode;
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody))]
-[DefaultExecutionOrder(-100)]
 public class TankController : NetworkBehaviour
 {
     [SerializeField] private float _turnSpeed;
@@ -16,7 +14,7 @@ public class TankController : NetworkBehaviour
     
     [Header("Gear Settings")] 
     [SerializeField] private List<Gear> _gears = new List<Gear>();
-    
+
     private Gear _currentGear;
     private Vector2 _input;
 
@@ -36,14 +34,15 @@ public class TankController : NetworkBehaviour
     {
         _rb = GetComponent<Rigidbody>();
         _no = GetComponent<NetworkObject>();
+        _currentGear = _gears[0];
     }
     
-    private void OnEnable()
+    public override void OnNetworkSpawn()
     {
+        Debug.Log("OnEnable: " + IsServer);
         if (!IsServer) return;
-        
-        if (!_no.IsSpawned) _no.Spawn(true);
 
+        Debug.Log("Spawning stations on network");
         foreach (StationSetupData data in _setupData)
         {
             GameObject go = Instantiate(data.Prefab, data.SpawnParent);
@@ -51,11 +50,12 @@ public class TankController : NetworkBehaviour
             if (go.TryGetComponent(out Station station) && go.TryGetComponent(out NetworkObject no))
             {
                 no.Spawn(true);
+                station.SetVirtualParent(data.SpawnParent);
             }
 
             if (station is DriverStation driverStation) _driverStation = driverStation;
         }
-
+        
         if (_driverStation)
         {
             _driverStation.onChangeGear += SetGear;
@@ -63,7 +63,7 @@ public class TankController : NetworkBehaviour
         }
     }
 
-    private void OnDisable()
+    public override void OnNetworkDespawn()
     {
         if (!IsServer) return;
         

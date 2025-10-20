@@ -20,9 +20,12 @@ public class Dashboard : MonoBehaviour
 
     private void OnDisable()
     {
-        _tankController.onBroadcastSpeed -= UpdateSpeed;
-        _tankController.onBroadcastThrottle -= UpdateThrottle;
-        _tankController.onBroadcastCurrentGear -= UpdateGear;
+        if (_tankController)
+        {
+            _tankController.onBroadcastSpeed -= UpdateSpeed;
+            _tankController.onBroadcastThrottle -= UpdateThrottle;
+            _tankController.onBroadcastCurrentGear -= UpdateGear;
+        }
     }
 
     private void UpdateSpeed(float speed)

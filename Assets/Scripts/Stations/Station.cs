@@ -13,6 +13,8 @@ public class Station : NetworkBehaviour, IPilotable
     protected PlayerController _pilot;
     protected Collider _collider;
     protected NetworkObject _no;
+
+    private Transform _virtualParent;
     
     public event IPilotable.OnAnimationTriggered onAnimationTriggered;
 
@@ -20,6 +22,15 @@ public class Station : NetworkBehaviour, IPilotable
     {
         _collider = GetComponent<Collider>();
         _no = GetComponent<NetworkObject>();
+    }
+
+    protected virtual void Update()
+    {
+        if (_virtualParent)
+        {
+            transform.position = _virtualParent.position;
+            transform.rotation = _virtualParent.rotation;
+        }
     }
     
     public bool TryEnterPilot(PlayerController player)
@@ -74,6 +85,11 @@ public class Station : NetworkBehaviour, IPilotable
     public GameObject GetGameObject()
     {
         return gameObject;
+    }
+
+    public void SetVirtualParent(Transform newParent)
+    {
+        _virtualParent = newParent;
     }
 
     public PilotableData GetPilotableData() { return StationData; }

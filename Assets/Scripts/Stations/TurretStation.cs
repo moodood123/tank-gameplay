@@ -17,8 +17,9 @@ public class GunnerStation : Station
     private Vector2 _moveInput;
     private Vector2 _turretRotation;
 
-    private void Update()
+    protected override void Update()
     {
+        base.Update();
         HandleInput();
         HandleOrientation();
     }

@@ -228,7 +228,7 @@ MonoBehaviour:
     startValue: 1
     endValue: 0
     settings:
-      duration: 0.5
+      duration: 0.1
       ease: -1
       customEase:
         serializedVersion: 2
@@ -266,7 +266,7 @@ MonoBehaviour:
     startValue: 0
     endValue: 1
     settings:
-      duration: 0.5
+      duration: 0.1
       ease: -1
       customEase:
         serializedVersion: 2

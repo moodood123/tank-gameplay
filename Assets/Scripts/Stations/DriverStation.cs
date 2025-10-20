@@ -31,8 +31,9 @@ public class DriverStation : Station
         onChangeGear?.Invoke(GearType.N);
     }
     
-    private void Update()
+    protected override void Update()
     {
+        base.Update();
         HandleMotion();
     }
 
@@ -51,7 +52,7 @@ public class DriverStation : Station
             {
                 _turnThrottle -= _turnThrottleDecay * Time.deltaTime;
             }
-            else if (_turnThrottle < 0.1f)
+            else if (_turnThrottle < -0.1f)
             {
                 _turnThrottle += _turnThrottleDecay * Time.deltaTime;
             }
