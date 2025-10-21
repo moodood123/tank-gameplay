@@ -2,27 +2,39 @@ using System.Collections.Generic;
 using System.Linq;
 using Unity.Netcode;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 public class PlayerSpawner : NetworkBehaviour
 {
     [SerializeField] private GameObject _playerPrefab;
-    
-    private static Dictionary<ulong, NetworkObject> _spawnedPlayers = new();
+
+    private static Dictionary<ulong, NetworkObject> _spawnedPlayers = new Dictionary<ulong, NetworkObject>();
 
     private void Start()
     {
-        Debug.Log("Load Complete");
-        if (_spawnedPlayers.ContainsKey(OwnerClientId)) return;
-        Debug.Log("Proceeding to spawn player");
-        
-        if (TryAutoSpawnPlayer(FindObjectsByType<Station>(FindObjectsSortMode.None).ToList(), out NetworkObject networkPlayer))
+        if (IsServer) SpawnInitialPlayers();
+    }
+
+    private void SpawnInitialPlayers()
+    {
+        var clientIds = NetworkManager.Singleton.ConnectedClientsIds;
+
+        List<Station> stations = FindObjectsByType<Station>(FindObjectsSortMode.None).ToList();
+
+        foreach (ulong clientId in clientIds)
         {
-            _spawnedPlayers[OwnerClientId] = networkPlayer;
+            if (_spawnedPlayers.ContainsKey(clientId))
+            {
+                continue;
+            }
+
+            if (TryAutoSpawnPlayer(clientId, stations, out NetworkObject no))
+            {
+                _spawnedPlayers.Add(clientId, no);
+            }
         }
     }
     
-    private bool TryAutoSpawnPlayer(List<Station> stations, out NetworkObject networkPlayer)
+    private bool TryAutoSpawnPlayer(ulong ownerID, List<Station> stations, out NetworkObject networkPlayer)
     {
         networkPlayer = null;
         GameObject go = Instantiate(_playerPrefab);
@@ -34,7 +46,7 @@ public class PlayerSpawner : NetworkBehaviour
             return false;
         }
 
-        no.SpawnWithOwnership(OwnerClientId, true);
+        no.SpawnWithOwnership(ownerID, true);
         
         foreach (Station station in stations)
         {
