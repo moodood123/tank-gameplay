@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using PrimeTween;
 using Unity.Cinemachine;
 using Unity.Netcode;
@@ -14,6 +15,16 @@ public class PlayerController : AgentController
     [SerializeField] private LayerMask _interactionMask;
     [SerializeField] private Transform _virtualParent;
 
+    [Header("General References")] 
+    [SerializeField] private GameObject _playerCamera;
+    [SerializeField] private GameObject _virtualCamera;
+    
+    [Header("Visual References")] 
+    [SerializeField] private List<GameObject> _thirdPersonElements = new List<GameObject>();
+    [SerializeField] private List<GameObject> _firstPersonElements = new List<GameObject>();
+    [SerializeField] private int _thirdPersonLayerMask;
+    [SerializeField] private int _firstPersonLayerMask;
+    
     [Header("Pause References")]
     [SerializeField] private GameObject _pauseMenu;
     [SerializeField] private CinemachinePanTilt _panTilt;
@@ -51,6 +62,32 @@ public class PlayerController : AgentController
     private void OnDisable()
     {
         _pi.onActionTriggered -= OnInputReceived;
+    }
+
+    public override void OnNetworkSpawn()
+    {
+        base.OnNetworkSpawn();
+
+        foreach (GameObject element in _thirdPersonElements)
+        {
+            element.layer = IsOwner ? _thirdPersonLayerMask : _firstPersonLayerMask;
+        }
+
+        foreach (GameObject element in _firstPersonElements)
+        {
+            element.layer =  IsOwner ? _firstPersonLayerMask : _thirdPersonLayerMask;
+        }
+
+        Debug.Log("IsOwner: " + IsOwner);
+        
+        _playerCamera.SetActive(IsOwner);
+        _virtualCamera.SetActive(IsOwner);
+        _pi.enabled = IsOwner;
+    }
+
+    public override void OnNetworkDespawn()
+    {
+        base.OnNetworkDespawn();
     }
 
     protected override void Start()
