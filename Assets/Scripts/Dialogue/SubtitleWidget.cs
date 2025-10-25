@@ -10,6 +10,7 @@ public class SubtitleWidget : MonoBehaviour
     private void OnEnable()
     {
         if (DialogueManager.Instance) DialogueManager.Instance.onDisplaySubtitleText += DisplaySubtitles;
+        else Debug.LogWarning("No dialogue manager found");
     }
 
     private void OnDisable()

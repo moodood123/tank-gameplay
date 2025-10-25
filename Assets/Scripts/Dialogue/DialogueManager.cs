@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[DefaultExecutionOrder(-10000)]
 public class DialogueManager : MonoBehaviour
 {
     private DialogueStatement _ongoingStatement;
@@ -22,7 +23,6 @@ public class DialogueManager : MonoBehaviour
         if (!Instance)
         {
             Instance = this;
-            DontDestroyOnLoad(gameObject);
         }
         else if (Instance != this)
         {
@@ -37,8 +37,11 @@ public class DialogueManager : MonoBehaviour
 
     public void PlayDialogue(DialogueStatement statement)
     {
+        Debug.Log("Playing Dialogue");
+        
         if (_ongoingStatement != null && statement.OverrideType != StatementOverrideType.Override) return;
 
+        Debug.LogWarning("Playing Dialogue");
         if (_statementCoroutine != null)
         {
             StopCoroutine(_statementCoroutine);

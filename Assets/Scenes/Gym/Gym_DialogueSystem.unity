@@ -466,7 +466,7 @@ GameObject:
   - component: {fileID: 1975378325}
   - component: {fileID: 1975378324}
   m_Layer: 0
-  m_Name: DialogueDebugger
+  m_Name: DialoguePlayer
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -484,14 +484,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ddf7785833aa1964dba3a47974b422e0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _testStatement:
-    <ValueSequence>k__BackingField:
-    - Line 1
-    - Line 2
+  _statement:
+    <ValueSequence>k__BackingField: []
     <AudioReferenceSequence>k__BackingField: []
-    <DurationSequence>k__BackingField:
-    - 1
-    - 1
+    <DurationSequence>k__BackingField: []
     <OverrideType>k__BackingField: 0
 --- !u!4 &1975378325
 Transform:
