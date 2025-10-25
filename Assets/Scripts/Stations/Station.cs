@@ -14,7 +14,7 @@ public class Station : NetworkBehaviour, IPilotable
     protected Collider _collider;
     protected NetworkObject _no;
 
-    private Transform _virtualParent;
+    protected Transform VirtualParent { get; private set; }
     
     public event IPilotable.OnAnimationTriggered onAnimationTriggered;
 
@@ -26,10 +26,10 @@ public class Station : NetworkBehaviour, IPilotable
 
     protected virtual void Update()
     {
-        if (_virtualParent)
+        if (VirtualParent)
         {
-            transform.position = _virtualParent.position;
-            transform.rotation = _virtualParent.rotation;
+            transform.position = VirtualParent.position;
+            transform.rotation = VirtualParent.rotation;
         }
     }
     
@@ -89,7 +89,7 @@ public class Station : NetworkBehaviour, IPilotable
 
     public void SetVirtualParent(Transform newParent)
     {
-        _virtualParent = newParent;
+        VirtualParent = newParent;
     }
 
     public PilotableData GetPilotableData() { return StationData; }

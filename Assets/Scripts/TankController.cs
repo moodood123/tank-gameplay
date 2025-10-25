@@ -49,8 +49,9 @@ public class TankController : NetworkBehaviour
 
             if (go.TryGetComponent(out Station station) && go.TryGetComponent(out NetworkObject no))
             {
-                no.Spawn(true);
                 station.SetVirtualParent(data.SpawnParent);
+                
+                no.Spawn(true);
             }
 
             if (station is DriverStation driverStation) _driverStation = driverStation;

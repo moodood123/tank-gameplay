@@ -78,8 +78,6 @@ public class PlayerController : AgentController
             element.layer =  IsOwner ? _firstPersonLayerMask : _thirdPersonLayerMask;
         }
 
-        Debug.Log("IsOwner: " + IsOwner);
-        
         _playerCamera.SetActive(IsOwner);
         _virtualCamera.SetActive(IsOwner);
         _pi.enabled = IsOwner;
@@ -101,8 +99,8 @@ public class PlayerController : AgentController
     {
         CheckForInteractables();
 
-        transform.position = _virtualParent.position;
-        transform.rotation = _virtualParent.rotation;
+        transform.position = _currentPilotable.GetPilotableData().PilotPosition.position;
+        transform.rotation = _currentPilotable.GetPilotableData().PilotPosition.rotation;
     }
 
     private void TryInteract()
@@ -167,8 +165,6 @@ public class PlayerController : AgentController
         if (_currentPilotable != null) _currentPilotable.onAnimationTriggered -= OnAnimationTriggered;
         
         // Lerp to the new station
-        //transform.parent = pilotable.GetPilotableData().PilotPosition;
-        _virtualParent.parent = pilotable.GetPilotableData().PilotPosition;
         yield return Tween.LocalPosition(_virtualParent, Vector3.zero, _transitionSettings).ToYieldInstruction();
         
         // Enter the new station
