@@ -9,8 +9,14 @@ public class Station : NetworkBehaviour, IPilotable
     [field: SerializeField] public PilotableData StationData { get; private set; }
 
     [SerializeField] protected CinemachineCamera _stationCamera;
+
+    private NetworkVariable<NetworkObjectReference> _pilotReference =
+        new NetworkVariable<NetworkObjectReference>(default, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+
+    public bool IsOccupied => _pilotReference.Value.TryGet(out _);
+
+    public PlayerController CurrentPilot { get; private set; }
     
-    protected PlayerController _pilot;
     protected Collider _collider;
     protected NetworkObject _no;
 
@@ -24,6 +30,18 @@ public class Station : NetworkBehaviour, IPilotable
         _no = GetComponent<NetworkObject>();
     }
 
+    public override void OnNetworkSpawn()
+    {
+        _pilotReference.OnValueChanged += OnPilotChanged;
+
+        if (IsServer) Initialize();
+    }
+
+    public override void OnNetworkDespawn()
+    {
+        _pilotReference.OnValueChanged -= OnPilotChanged;
+    }
+
     protected virtual void Update()
     {
         if (VirtualParent)
@@ -32,27 +50,49 @@ public class Station : NetworkBehaviour, IPilotable
             transform.rotation = VirtualParent.rotation;
         }
     }
-    
-    public bool TryEnterPilot(PlayerController player)
+
+    private void Initialize()
     {
-        if (!_pilot)
+        _pilotReference.Value = default;
+    }
+
+    private void OnPilotChanged(NetworkObjectReference oldReference, NetworkObjectReference newReference)
+    {
+        if (newReference.TryGet(out NetworkObject no) && no.TryGetComponent(out PlayerController player))
         {
-            _pilot = player;
-            ToggleInteractability(false);
-            
-            OverrideCamera();
-            return true;
+            CurrentPilot = player;
         }
-        return false;
+        else
+        {
+            CurrentPilot = null;
+        }
+    }
+    
+    public bool TryEnter(PlayerController player)
+    {
+        if (!IsServer) return false;
+        if (IsOccupied) return false;
+        Debug.Log("<color=orange>Entering Station</color>");
+        _pilotReference.Value = player.NetworkObject;
+        return true;
+    }
+    
+    public void Exit(PlayerController player)
+    {
+        if (!IsServer) return;
+        
+        if (!_pilotReference.Value.TryGet(out NetworkObject no) || no != player.NetworkObject) return;
+
+        _pilotReference.Value = default;
     }
 
     public void LeavePilot(PlayerController player)
     {
-        if (player != _pilot) return;
+        if (player != CurrentPilot) return;
         ToggleInteractability(true);
         
         ReturnCamera();
-        _pilot = null;
+        CurrentPilot = null;
         Debug.Log("Pilot left station");
     }
 
@@ -76,23 +116,19 @@ public class Station : NetworkBehaviour, IPilotable
         _stationCamera.Priority = -100;
     }
     
-    protected virtual void OnPlayerEnter() { }
-    protected virtual void OnPlayerLeave() { }
-    
-    public string GetInteractionPrompt() { return StationName; }
-    
     public void Interact() { }
-    public GameObject GetGameObject()
-    {
-        return gameObject;
-    }
 
     public void SetVirtualParent(Transform newParent)
     {
         VirtualParent = newParent;
     }
 
+    #region Interface Return Methods
+    public GameObject GetGameObject() { return gameObject; }
+    public string GetInteractionPrompt() { return StationName; }
     public PilotableData GetPilotableData() { return StationData; }
+    public NetworkObjectReference GetNetworkObjectReference() { return new NetworkObjectReference(NetworkObject); }
+    #endregion
 
     public virtual void OnInputRelayed(InputAction.CallbackContext context) { }
 }

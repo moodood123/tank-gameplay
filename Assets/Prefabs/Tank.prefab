@@ -1054,12 +1054,13 @@ GameObject:
   m_Component:
   - component: {fileID: 4002784797397773492}
   - component: {fileID: 4914473426882243774}
-  - component: {fileID: 845353817109135284}
   - component: {fileID: 2326010145115706159}
+  - component: {fileID: 7201770650366037293}
   - component: {fileID: 8446496050440832571}
   - component: {fileID: 3675796731332317440}
   - component: {fileID: 5473992317832900394}
   - component: {fileID: 5584495308079853194}
+  - component: {fileID: 845353817109135284}
   m_Layer: 0
   m_Name: Tank
   m_TagString: Untagged
@@ -1112,52 +1113,6 @@ MonoBehaviour:
   AutoObjectParentSync: 1
   SyncOwnerTransformWhenParented: 1
   AllowOwnerToParent: 0
---- !u!114 &845353817109135284
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7832147075705425996}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e96cb6065543e43c4a752faaa1468eb1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  ShowTopMostFoldoutHeaderGroup: 1
-  NetworkTransformExpanded: 0
-  AutoOwnerAuthorityTickOffset: 1
-  PositionInterpolationType: 0
-  RotationInterpolationType: 0
-  ScaleInterpolationType: 0
-  PositionLerpSmoothing: 1
-  PositionMaxInterpolationTime: 0.1
-  RotationLerpSmoothing: 1
-  RotationMaxInterpolationTime: 0.1
-  ScaleLerpSmoothing: 1
-  ScaleMaxInterpolationTime: 0.1
-  AuthorityMode: 0
-  TickSyncChildren: 0
-  UseUnreliableDeltas: 0
-  SyncPositionX: 1
-  SyncPositionY: 1
-  SyncPositionZ: 1
-  SyncRotAngleX: 1
-  SyncRotAngleY: 1
-  SyncRotAngleZ: 1
-  SyncScaleX: 1
-  SyncScaleY: 1
-  SyncScaleZ: 1
-  PositionThreshold: 0.001
-  RotAngleThreshold: 0.01
-  ScaleThreshold: 0.01
-  UseQuaternionSynchronization: 0
-  UseQuaternionCompression: 0
-  UseHalfFloatPrecision: 0
-  InLocalSpace: 0
-  SwitchTransformSpaceWhenParented: 0
-  Interpolate: 1
-  SlerpPosition: 0
 --- !u!114 &2326010145115706159
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1173,21 +1128,22 @@ MonoBehaviour:
   ShowTopMostFoldoutHeaderGroup: 1
   _turnSpeed: 4
   _moveSpeed: 3
+  _playerSpawner: {fileID: 7201770650366037293}
   _setupData:
   - <SpawnParent>k__BackingField: {fileID: 6881145380152996535}
     <Prefab>k__BackingField: {fileID: 3731054490843515849, guid: 2122ff3eb242cb844865996f6a24291a, type: 3}
-  - <SpawnParent>k__BackingField: {fileID: 6668119103957419865}
-    <Prefab>k__BackingField: {fileID: 8813943170888537857, guid: eb3013b074de1c446b112ace76072431, type: 3}
-  - <SpawnParent>k__BackingField: {fileID: 170559224439168865}
-    <Prefab>k__BackingField: {fileID: 8145979704728308089, guid: 3e186e16487d73241a76bd989976e188, type: 3}
   - <SpawnParent>k__BackingField: {fileID: 2463063004725649786}
     <Prefab>k__BackingField: {fileID: 3768393842130600247, guid: 0c0ff1e398fe9e04b884101e330e0fdd, type: 3}
+  - <SpawnParent>k__BackingField: {fileID: 6668119103957419865}
+    <Prefab>k__BackingField: {fileID: 8813943170888537857, guid: eb3013b074de1c446b112ace76072431, type: 3}
+  - <SpawnParent>k__BackingField: {fileID: 6318404088617281242}
+    <Prefab>k__BackingField: {fileID: 6720138083897019154, guid: abcab054d1d4b70468c3c2ca922911ab, type: 3}
+  - <SpawnParent>k__BackingField: {fileID: 170559224439168865}
+    <Prefab>k__BackingField: {fileID: 8145979704728308089, guid: 3e186e16487d73241a76bd989976e188, type: 3}
   - <SpawnParent>k__BackingField: {fileID: 6848870454180097826}
     <Prefab>k__BackingField: {fileID: 2553912087801921666, guid: 094b0975aefaa904d829253cd0b35e0a, type: 3}
   - <SpawnParent>k__BackingField: {fileID: 8201397335566189294}
     <Prefab>k__BackingField: {fileID: 1550004160544939417, guid: 8cd7d5e164393fd4ebbad45a0ceb5320, type: 3}
-  - <SpawnParent>k__BackingField: {fileID: 6318404088617281242}
-    <Prefab>k__BackingField: {fileID: 6720138083897019154, guid: abcab054d1d4b70468c3c2ca922911ab, type: 3}
   _gears:
   - <Type>k__BackingField: 0
     <SpeedFactor>k__BackingField: 0
@@ -1199,6 +1155,20 @@ MonoBehaviour:
     <SpeedFactor>k__BackingField: 2
   - <Type>k__BackingField: 4
     <SpeedFactor>k__BackingField: 3
+--- !u!114 &7201770650366037293
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7832147075705425996}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d3adf8c1e8452384398f0ed4c1d802d1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ShowTopMostFoldoutHeaderGroup: 1
+  _playerPrefab: {fileID: 2494032255296414562, guid: 6f4b5caf928021a4585ebff0eaf290c8, type: 3}
 --- !u!114 &8446496050440832571
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1278,6 +1248,52 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 4.25, y: 3, z: 6}
   m_Center: {x: 0, y: 1.5, z: 0}
+--- !u!114 &845353817109135284
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7832147075705425996}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e96cb6065543e43c4a752faaa1468eb1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ShowTopMostFoldoutHeaderGroup: 1
+  NetworkTransformExpanded: 0
+  AutoOwnerAuthorityTickOffset: 1
+  PositionInterpolationType: 0
+  RotationInterpolationType: 0
+  ScaleInterpolationType: 0
+  PositionLerpSmoothing: 1
+  PositionMaxInterpolationTime: 0.1
+  RotationLerpSmoothing: 1
+  RotationMaxInterpolationTime: 0.1
+  ScaleLerpSmoothing: 1
+  ScaleMaxInterpolationTime: 0.1
+  AuthorityMode: 0
+  TickSyncChildren: 0
+  UseUnreliableDeltas: 0
+  SyncPositionX: 1
+  SyncPositionY: 1
+  SyncPositionZ: 1
+  SyncRotAngleX: 1
+  SyncRotAngleY: 1
+  SyncRotAngleZ: 1
+  SyncScaleX: 1
+  SyncScaleY: 1
+  SyncScaleZ: 1
+  PositionThreshold: 0.001
+  RotAngleThreshold: 0.01
+  ScaleThreshold: 0.01
+  UseQuaternionSynchronization: 0
+  UseQuaternionCompression: 0
+  UseHalfFloatPrecision: 0
+  InLocalSpace: 0
+  SwitchTransformSpaceWhenParented: 0
+  Interpolate: 1
+  SlerpPosition: 0
 --- !u!1 &7874570090512109289
 GameObject:
   m_ObjectHideFlags: 0

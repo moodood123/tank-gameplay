@@ -1,63 +1,90 @@
 using System.Collections.Generic;
-using System.Linq;
 using Unity.Netcode;
 using UnityEngine;
 
+[RequireComponent(typeof(TankController))]
 public class PlayerSpawner : NetworkBehaviour
 {
     [SerializeField] private GameObject _playerPrefab;
 
-    private static Dictionary<ulong, NetworkObject> _spawnedPlayers = new Dictionary<ulong, NetworkObject>();
+    private Dictionary<ulong, NetworkObject> _spawnedPlayers = new Dictionary<ulong, NetworkObject>();
 
-    private void Start()
+    public override void OnNetworkSpawn()
     {
-        if (IsServer) SpawnInitialPlayers();
+        base.OnNetworkSpawn();
+        if (!IsServer) return;
+        
+        NetworkManager.Singleton.OnClientConnectedCallback += OnClientConnected;
     }
 
-    private void SpawnInitialPlayers()
+    public override void OnNetworkDespawn()
     {
-        var clientIds = NetworkManager.Singleton.ConnectedClientsIds;
+        base.OnNetworkDespawn();
+        if (!IsServer) return;
+        
+        NetworkManager.Singleton.OnClientConnectedCallback -= OnClientConnected;
+    }
 
-        List<Station> stations = FindObjectsByType<Station>(FindObjectsSortMode.None).ToList();
+    private void OnClientConnected(ulong clientId)
+    {
+        // TODO: Add logic for spawning late joiners
+        
+        // SpawnPlayer(clientId);
+    }
+    
+    public void SpawnInitialPlayers(List<Station> stations)
+    {
+        if (!IsServer) return;
+        
+        var clientIds = NetworkManager.Singleton.ConnectedClientsIds;
 
         foreach (ulong clientId in clientIds)
         {
-            if (_spawnedPlayers.ContainsKey(clientId))
-            {
-                continue;
-            }
+            if (_spawnedPlayers.ContainsKey(clientId)) continue;
 
-            if (TryAutoSpawnPlayer(clientId, stations, out NetworkObject no))
-            {
-                _spawnedPlayers.Add(clientId, no);
-            }
+            SpawnPlayer(clientId, stations);
         }
     }
-    
-    private bool TryAutoSpawnPlayer(ulong ownerID, List<Station> stations, out NetworkObject networkPlayer)
+
+    public void SpawnPlayer(ulong clientId, List<Station> stations)
     {
-        networkPlayer = null;
+        if (!IsServer) return;
+        
+        // Instantiate the player locally
         GameObject go = Instantiate(_playerPrefab);
 
-        if (!go.TryGetComponent(out PlayerController player) || !go.TryGetComponent(out NetworkObject no))
+        if (!go.TryGetComponent(out NetworkObject no) || !go.TryGetComponent(out PlayerController pc))
         {
-            Debug.LogWarning("Invalid player prefab instantiated, cleaning up");
+            Debug.LogError("Attempted to instantiate invalid player prefab");
             Destroy(go);
-            return false;
+            return;
         }
 
-        no.SpawnWithOwnership(ownerID, true);
+        // Spawn the player on the network
+        no.SpawnWithOwnership(clientId, true);
+        _spawnedPlayers[clientId] = no;
         
+        // Assign the player an initial station
         foreach (Station station in stations)
         {
-            if (player.Initialize(station.GetComponent<IPilotable>()))
+            if (!station.IsOccupied && station.TryEnter(pc))
             {
-                networkPlayer = no;
-                return true;
+                pc.AssignStationClientRpc(station.NetworkObject);
+                return;
             }
         }
 
-        return false;
+        Debug.LogWarning("No available station found for the client");
     }
-    
+
+    public void DespawnPlayer(ulong clientId)
+    {
+        if(!IsServer) return;
+
+        if (_spawnedPlayers.TryGetValue(clientId, out NetworkObject no))
+        {
+            no.Despawn();
+            _spawnedPlayers.Remove(clientId);
+        }
+    }
 }

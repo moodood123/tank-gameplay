@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using NUnit.Framework;
 using Unity.Netcode;
 using UnityEngine;
 
@@ -9,7 +10,8 @@ public class TankController : NetworkBehaviour
     [SerializeField] private float _turnSpeed;
     [SerializeField] private float _moveSpeed;
 
-    [Header("Network Setup References")]
+    [Header("Network Setup References")] 
+    [SerializeField] private PlayerSpawner _playerSpawner;
     [SerializeField] private List<StationSetupData> _setupData = new List<StationSetupData>();
     
     [Header("Gear Settings")] 
@@ -19,6 +21,8 @@ public class TankController : NetworkBehaviour
     private Vector2 _input;
 
     private DriverStation _driverStation;
+
+    private List<Station> _stations = new List<Station>();
     
     private Rigidbody _rb;
     private NetworkObject _no;
@@ -54,6 +58,8 @@ public class TankController : NetworkBehaviour
                 no.Spawn(true);
             }
 
+            _stations.Add(station);
+
             if (station is DriverStation driverStation) _driverStation = driverStation;
         }
         
@@ -62,6 +68,9 @@ public class TankController : NetworkBehaviour
             _driverStation.onChangeGear += SetGear;
             _driverStation.onMovementRelay += OnMovementRelay;
         }
+        
+        // Spawn players
+        _playerSpawner.SpawnInitialPlayers(_stations);
     }
 
     public override void OnNetworkDespawn()

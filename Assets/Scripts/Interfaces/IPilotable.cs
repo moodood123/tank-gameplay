@@ -1,13 +1,15 @@
 using System;
+using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
 public interface IPilotable : IInteractable
 {
     // Methods
-    public bool TryEnterPilot(PlayerController player);
-    public void LeavePilot(PlayerController player);
+    public bool TryEnter(PlayerController player);
+    public void Exit(PlayerController player);
     public PilotableData GetPilotableData();
+    public NetworkObjectReference GetNetworkObjectReference();
     public void OnInputRelayed(InputAction.CallbackContext context);
     
     // Delegates
