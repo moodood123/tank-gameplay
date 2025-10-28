@@ -97,6 +97,11 @@ public class PlayerController : AgentController
     {
         CheckForInteractables();
 
+        
+    }
+
+    private void LateUpdate()
+    {
         transform.position = _currentPilotable.GetPilotableData().PilotPosition.position;
         transform.rotation = _currentPilotable.GetPilotableData().PilotPosition.rotation;
     }

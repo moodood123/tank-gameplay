@@ -1,3 +1,4 @@
+using System.Collections;
 using Unity.Cinemachine;
 using Unity.Netcode;
 using UnityEngine;
@@ -16,7 +17,8 @@ public class Station : NetworkBehaviour, IPilotable
     public bool IsOccupied => _pilotReference.Value.TryGet(out _);
 
     public PlayerController CurrentPilot { get; private set; }
-    
+
+    protected TankController _parentTank;
     protected Collider _collider;
     protected NetworkObject _no;
 
@@ -43,6 +45,11 @@ public class Station : NetworkBehaviour, IPilotable
     }
 
     protected virtual void Update()
+    {
+        
+    }
+
+    protected virtual void LateUpdate()
     {
         if (VirtualParent)
         {
@@ -118,9 +125,28 @@ public class Station : NetworkBehaviour, IPilotable
     
     public void Interact() { }
 
-    public void SetVirtualParent(Transform newParent)
+    [ClientRpc]
+    public void SetVirtualParentClientRpc(ulong tankId, int dataIndex)
     {
-        VirtualParent = newParent;
+        StartCoroutine(SetVirtualParentWhenSafe(tankId, dataIndex));
+    }
+
+    private IEnumerator SetVirtualParentWhenSafe(ulong tankId, int dataIndex)
+    {
+        while (!NetworkManager.Singleton || NetworkManager.Singleton.SpawnManager == null) yield return null;
+        
+        NetworkObject no = null;
+        while (!NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(tankId, out no)) yield return null;
+
+        yield return null;
+        
+        if (no && no.TryGetComponent(out TankController tank))
+        {
+            _parentTank = tank;
+            VirtualParent = tank.SetupData[dataIndex].SpawnParent;
+            Debug.Log($"<color=blue>Virtual parent assigned to station: [{transform.name}]</color>");
+        }
+        else Debug.LogError($"Virtual parent not assigned to station: [{transform.name}]");
     }
 
     #region Interface Return Methods

@@ -12,7 +12,7 @@ public class TankController : NetworkBehaviour
 
     [Header("Network Setup References")] 
     [SerializeField] private PlayerSpawner _playerSpawner;
-    [SerializeField] private List<StationSetupData> _setupData = new List<StationSetupData>();
+    [field: SerializeField] public List<StationSetupData> SetupData { get; private set; } = new List<StationSetupData>();
     
     [Header("Gear Settings")] 
     [SerializeField] private List<Gear> _gears = new List<Gear>();
@@ -47,15 +47,16 @@ public class TankController : NetworkBehaviour
         if (!IsServer) return;
 
         Debug.Log("Spawning stations on network");
-        foreach (StationSetupData data in _setupData)
+        foreach (StationSetupData data in SetupData)
         {
             GameObject go = Instantiate(data.Prefab, data.SpawnParent);
 
             if (go.TryGetComponent(out Station station) && go.TryGetComponent(out NetworkObject no))
             {
-                station.SetVirtualParent(data.SpawnParent);
-                
                 no.Spawn(true);
+                
+                int index = SetupData.IndexOf(data);
+                station.SetVirtualParentClientRpc(this.NetworkObjectId, index);
             }
 
             _stations.Add(station);

@@ -39,8 +39,6 @@ public class DriverStation : Station
 
     private void HandleMotion()
     {
-        if (!IsOwner) return;
-        
         _moveThrottle += _moveInput.y * _moveThrottleAcceleration * Time.deltaTime;
         if (_moveInput.y == 0f) _moveThrottle -= _moveThrottleDecay * Time.deltaTime;
         _moveThrottle = Mathf.Clamp(_moveThrottle, _moveThrottleRange.x, _moveThrottleRange.y);
