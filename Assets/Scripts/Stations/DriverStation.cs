@@ -57,42 +57,57 @@ public class DriverStation : Station
         }
         _turnThrottle = Mathf.Clamp(_turnThrottle, _turnThrottleRange.x, _turnThrottleRange.y);
         
-        // TODO: Add options for relaying input in single-player context
-        HandleMotionServerRpc(_moveThrottle, _turnThrottle);
-        //onMovementRelay?.Invoke(_moveThrottle, _turnThrottle);
+        if (_parentTank && _parentTank.NetworkManager.LocalClientId == CurrentPilot?.OwnerClientId)
+        {
+            if (IsServer)
+            {
+                onMovementRelay?.Invoke(_moveThrottle, _turnThrottle);
+            }
+            else
+            {
+                HandleMotionServerRpc(_moveThrottle, _turnThrottle);
+            }
+        }
     }
 
     [ServerRpc(RequireOwnership = false)]
-    private void HandleMotionServerRpc(float moveThrottle, float turnThrottle)
+    private void HandleMotionServerRpc(float moveThrottle, float turnThrottle, ServerRpcParams rpcParams = default)
     {
+        if (!CurrentPilot) return;
+        if (rpcParams.Receive.SenderClientId != CurrentPilot.OwnerClientId) return;
+
         onMovementRelay?.Invoke(moveThrottle, turnThrottle);
     }
 
     private void TryChangeGear(GearType newGearType)
     {
-        if (_isClutchIn)
+        if (!_isClutchIn) return;
+        
+        if (_parentTank && _parentTank.NetworkManager.LocalClientId == CurrentPilot?.OwnerClientId)
         {
-            // TODO: Add options for relaying input in single-player context
-
-            int newGearTypeIndex = (int)newGearType;
-            TryChangeGearServerRpc(newGearTypeIndex);
+            if (IsServer)
+            {
+                onChangeGear?.Invoke(newGearType);
+            }
+            else
+            { 
+                TryChangeGearServerRpc((int)newGearType);
+            }
         }
     }
 
     [ServerRpc(RequireOwnership = false)]
-    private void TryChangeGearServerRpc(int newGearTypeIndex)
+    private void TryChangeGearServerRpc(int newGearTypeIndex, ServerRpcParams rpcParams = default)
     {
-        GearType newGearType = GearType.N;
-        if (Enum.IsDefined(typeof(GearType), newGearTypeIndex)) newGearType = (GearType)newGearTypeIndex;
-        else Debug.LogError("Invalid Gear Type");
-
+        if (!CurrentPilot) return;
+        if (rpcParams.Receive.SenderClientId != CurrentPilot.OwnerClientId) return;
+        
+        GearType newGearType = (GearType)newGearTypeIndex;
         onChangeGear?.Invoke(newGearType);
     }
     
     public override void OnInputRelayed(InputAction.CallbackContext context)
     {
-        Debug.Log("<color=green>Input Received</color>");
-        
         switch (context.action.name)
         {
             case "Move":

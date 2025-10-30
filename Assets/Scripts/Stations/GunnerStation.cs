@@ -19,16 +19,17 @@ public class GunnerStation : Station
 
     public override void OnNetworkSpawn()
     {
-        _turret = VirtualParent.GetComponentInParent<Turret>();
-        _relay = VirtualParent.GetComponentInParent<PowerRelay>();
+        //_turret = VirtualParent.GetComponentInParent<Turret>();
+        //_relay = VirtualParent.GetComponentInParent<PowerRelay>();
 
-        if (!_turret) Debug.LogError("No turret found");
-        if (!_relay) Debug.LogError("No relay found");
+        //if (!_turret) Debug.LogError("No turret found");
+        //if (!_relay) Debug.LogError("No relay found");
     }
     
     protected override void Update()
     {
         base.Update();
+        return;
         HandleInput();
         HandleOrientation();
     }
@@ -41,7 +42,7 @@ public class GunnerStation : Station
 
     private void HandleInput()
     {
-        if (_relay.PowerRatios[_channel] <= 0f) return;
+        //if (_relay.PowerRatios[_channel] <= 0f) return;
         
         float x = _turretRotation.x + _moveInput.x * _turretSpeed.x * Time.deltaTime;
         float y = _turretRotation.y + _moveInput.y * _turretSpeed.y * Time.deltaTime;

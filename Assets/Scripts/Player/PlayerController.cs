@@ -96,8 +96,6 @@ public class PlayerController : AgentController
     private void Update()
     {
         CheckForInteractables();
-
-        
     }
 
     private void LateUpdate()
@@ -146,7 +144,7 @@ public class PlayerController : AgentController
         CheckForInteractables();
     }
 
-    [ServerRpc]
+    [ServerRpc(RequireOwnership = false)]
     private void RequestEnterStationServerRpc(NetworkObjectReference stationReference)
     {
         if (!stationReference.TryGet(out NetworkObject no) || !no.TryGetComponent(out Station station)) return;

@@ -44,10 +44,7 @@ public class Station : NetworkBehaviour, IPilotable
         _pilotReference.OnValueChanged -= OnPilotChanged;
     }
 
-    protected virtual void Update()
-    {
-        
-    }
+    protected virtual void Update() { }
 
     protected virtual void LateUpdate()
     {
@@ -80,6 +77,7 @@ public class Station : NetworkBehaviour, IPilotable
         if (!IsServer) return false;
         if (IsOccupied) return false;
         Debug.Log("<color=orange>Entering Station</color>");
+        
         _pilotReference.Value = player.NetworkObject;
         return true;
     }
@@ -91,6 +89,7 @@ public class Station : NetworkBehaviour, IPilotable
         if (!_pilotReference.Value.TryGet(out NetworkObject no) || no != player.NetworkObject) return;
 
         _pilotReference.Value = default;
+        
     }
 
     public void LeavePilot(PlayerController player)
@@ -144,7 +143,6 @@ public class Station : NetworkBehaviour, IPilotable
         {
             _parentTank = tank;
             VirtualParent = tank.SetupData[dataIndex].SpawnParent;
-            Debug.Log($"<color=blue>Virtual parent assigned to station: [{transform.name}]</color>");
         }
         else Debug.LogError($"Virtual parent not assigned to station: [{transform.name}]");
     }

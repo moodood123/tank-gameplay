@@ -9,7 +9,6 @@ public class DialoguePlayer : MonoBehaviour
     {
         if (DialogueManager.Instance)
         {
-            Debug.Log("Playing Dialogue");
             DialogueManager.Instance.PlayDialogue(_statement);
         }
     }

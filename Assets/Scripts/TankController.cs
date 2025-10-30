@@ -26,7 +26,7 @@ public class TankController : NetworkBehaviour
     
     private Rigidbody _rb;
     private NetworkObject _no;
-
+    
     public delegate void OnBroadcastFloat(float value);
     public event OnBroadcastFloat onBroadcastThrottle;
     public event OnBroadcastFloat onBroadcastSpeed;
@@ -39,14 +39,15 @@ public class TankController : NetworkBehaviour
         _rb = GetComponent<Rigidbody>();
         _no = GetComponent<NetworkObject>();
         _currentGear = _gears[0];
+        
+        Debug.Log($"[Server:{IsServer}] TankController Awake | NetworkObjectId: {(_no ? _no.NetworkObjectId : 0)} | InstanceID: {GetInstanceID()} | name: {name}");
     }
     
     public override void OnNetworkSpawn()
     {
-        Debug.Log("OnEnable: " + IsServer);
         if (!IsServer) return;
 
-        Debug.Log("Spawning stations on network");
+        // Spawn tank stations
         foreach (StationSetupData data in SetupData)
         {
             GameObject go = Instantiate(data.Prefab, data.SpawnParent);
@@ -87,8 +88,11 @@ public class TankController : NetworkBehaviour
 
     private void Update()
     {
-        onBroadcastSpeed?.Invoke(_rb.linearVelocity.magnitude);
-        onBroadcastThrottle?.Invoke(_input.x);
+        if (IsServer)
+        {
+            BroadcastSpeedClientRpc(_rb.linearVelocity.magnitude);
+            BroadcastThrottleClientRpc(_input.x);
+        }
     }
 
     private void FixedUpdate()
@@ -100,17 +104,35 @@ public class TankController : NetworkBehaviour
         }
     }
 
+    [ClientRpc]
+    private void BroadcastSpeedClientRpc(float value)
+    {
+        onBroadcastSpeed?.Invoke(value);
+    }
+
+    [ClientRpc]
+    private void BroadcastThrottleClientRpc(float value)
+    {
+        onBroadcastThrottle?.Invoke(value);
+    }
+
     private void SetGear(GearType newGear)
     {
         if (TryGetGear(newGear, out Gear gear))
         {
             _currentGear = gear;
-            onBroadcastCurrentGear?.Invoke(gear);
+            BroadcastCurrentGearClientRpc(_gears.IndexOf(gear));
         }
         else
         {
             Debug.LogWarning("No gear found for type " + newGear);
         }
+    }
+
+    [ClientRpc]
+    private void BroadcastCurrentGearClientRpc(int index)
+    {
+        onBroadcastCurrentGear?.Invoke(_gears[index]);
     }
 
     private void OnMovementRelay(float moveInput, float turnInput)
