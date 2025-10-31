@@ -1,4 +1,5 @@
 using System;
+using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -17,7 +18,7 @@ public class DriverStation : Station
     private float _turnThrottle;
 
     private Vector2 _moveInput = new Vector2();
-    private bool _isClutchIn = false;
+    private bool _isClutchIn;
 
     public delegate void OnInputRelay(float moveThrottle, float turnThrottle);
     public event OnInputRelay onMovementRelay;
@@ -30,7 +31,13 @@ public class DriverStation : Station
         onChangeGear?.Invoke(GearType.N);
     }
     
-    private void Update()
+    protected override void Update()
+    {
+        base.Update();
+        HandleMotion();
+    }
+
+    private void HandleMotion()
     {
         _moveThrottle += _moveInput.y * _moveThrottleAcceleration * Time.deltaTime;
         if (_moveInput.y == 0f) _moveThrottle -= _moveThrottleDecay * Time.deltaTime;
@@ -43,27 +50,60 @@ public class DriverStation : Station
             {
                 _turnThrottle -= _turnThrottleDecay * Time.deltaTime;
             }
-            else if (_turnThrottle < 0.1f)
+            else if (_turnThrottle < -0.1f)
             {
                 _turnThrottle += _turnThrottleDecay * Time.deltaTime;
             }
         }
-        
         _turnThrottle = Mathf.Clamp(_turnThrottle, _turnThrottleRange.x, _turnThrottleRange.y);
         
-        onMovementRelay?.Invoke(_moveThrottle, _turnThrottle);
+        if (_parentTank && _parentTank.NetworkManager.LocalClientId == CurrentPilot?.OwnerClientId)
+        {
+            if (IsServer)
+            {
+                onMovementRelay?.Invoke(_moveThrottle, _turnThrottle);
+            }
+            else
+            {
+                HandleMotionServerRpc(_moveThrottle, _turnThrottle);
+            }
+        }
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    private void HandleMotionServerRpc(float moveThrottle, float turnThrottle, ServerRpcParams rpcParams = default)
+    {
+        if (!CurrentPilot) return;
+        if (rpcParams.Receive.SenderClientId != CurrentPilot.OwnerClientId) return;
+
+        onMovementRelay?.Invoke(moveThrottle, turnThrottle);
     }
 
     private void TryChangeGear(GearType newGearType)
     {
-        if (_isClutchIn)
+        if (!_isClutchIn) return;
+        
+        if (_parentTank && _parentTank.NetworkManager.LocalClientId == CurrentPilot?.OwnerClientId)
         {
-            onChangeGear?.Invoke(newGearType);
+            if (IsServer)
+            {
+                onChangeGear?.Invoke(newGearType);
+            }
+            else
+            { 
+                TryChangeGearServerRpc((int)newGearType);
+            }
         }
-        else
-        {
-            Debug.LogWarning("Can't change gear");
-        }
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    private void TryChangeGearServerRpc(int newGearTypeIndex, ServerRpcParams rpcParams = default)
+    {
+        if (!CurrentPilot) return;
+        if (rpcParams.Receive.SenderClientId != CurrentPilot.OwnerClientId) return;
+        
+        GearType newGearType = (GearType)newGearTypeIndex;
+        onChangeGear?.Invoke(newGearType);
     }
     
     public override void OnInputRelayed(InputAction.CallbackContext context)

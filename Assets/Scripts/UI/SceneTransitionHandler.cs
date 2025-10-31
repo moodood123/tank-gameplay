@@ -35,7 +35,7 @@ public class SceneTransitionHandler : MonoBehaviour
 
     public void ChangeScene(string sceneName)
     {
-        StartCoroutine(FadeSequence(_fadeOutSettings, sceneName));
+        if (!_isSceneLoadInProgress) StartCoroutine(FadeSequence(_fadeOutSettings, sceneName));
     }
 
     private IEnumerator FadeSequence(TweenSettings<float> settings, string sceneToLoad = null)
@@ -44,10 +44,20 @@ public class SceneTransitionHandler : MonoBehaviour
         yield return Tween.Alpha(_fadePanel, settings).ToYieldInstruction();
         _isSceneLoadInProgress = false;
 
+        /*
         if (sceneToLoad != null)
         {
             if (NetworkManager.Singleton) NetworkManager.Singleton.SceneManager.LoadScene(sceneToLoad, LoadSceneMode.Single);
             else SceneManager.LoadScene(sceneToLoad);
+        }
+        */
+
+        if (sceneToLoad != null)
+        {
+            if (NetworkManager.Singleton && NetworkManager.Singleton.IsServer)
+            {
+                NetworkManager.Singleton.SceneManager.LoadScene(sceneToLoad, LoadSceneMode.Single);
+            }
         }
     }
 }

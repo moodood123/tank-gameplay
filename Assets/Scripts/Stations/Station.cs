@@ -1,3 +1,4 @@
+using System.Collections;
 using Unity.Cinemachine;
 using Unity.Netcode;
 using UnityEngine;
@@ -9,37 +10,95 @@ public class Station : NetworkBehaviour, IPilotable
     [field: SerializeField] public PilotableData StationData { get; private set; }
 
     [SerializeField] protected CinemachineCamera _stationCamera;
-    
-    protected PlayerController _pilot;
+
+    private NetworkVariable<NetworkObjectReference> _pilotReference =
+        new NetworkVariable<NetworkObjectReference>(default, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+
+    public bool IsOccupied => _pilotReference.Value.TryGet(out _);
+
+    public PlayerController CurrentPilot { get; private set; }
+
+    protected TankController _parentTank;
     protected Collider _collider;
+    protected NetworkObject _no;
+
+    protected Transform VirtualParent { get; private set; }
     
     public event IPilotable.OnAnimationTriggered onAnimationTriggered;
 
     private void Awake()
     {
         _collider = GetComponent<Collider>();
+        _no = GetComponent<NetworkObject>();
+    }
+
+    public override void OnNetworkSpawn()
+    {
+        _pilotReference.OnValueChanged += OnPilotChanged;
+
+        if (IsServer) Initialize();
+    }
+
+    public override void OnNetworkDespawn()
+    {
+        _pilotReference.OnValueChanged -= OnPilotChanged;
+    }
+
+    protected virtual void Update() { }
+
+    protected virtual void LateUpdate()
+    {
+        if (VirtualParent)
+        {
+            transform.position = VirtualParent.position;
+            transform.rotation = VirtualParent.rotation;
+        }
+    }
+
+    private void Initialize()
+    {
+        _pilotReference.Value = default;
+    }
+
+    private void OnPilotChanged(NetworkObjectReference oldReference, NetworkObjectReference newReference)
+    {
+        if (newReference.TryGet(out NetworkObject no) && no.TryGetComponent(out PlayerController player))
+        {
+            CurrentPilot = player;
+        }
+        else
+        {
+            CurrentPilot = null;
+        }
     }
     
-    public bool TryEnterPilot(PlayerController player)
+    public bool TryEnter(PlayerController player)
     {
-        if (!_pilot)
-        {
-            _pilot = player;
-            ToggleInteractability(false);
-            
-            OverrideCamera();
-            return true;
-        }
-        return false;
+        if (!IsServer) return false;
+        if (IsOccupied) return false;
+        Debug.Log("<color=orange>Entering Station</color>");
+        
+        _pilotReference.Value = player.NetworkObject;
+        return true;
+    }
+    
+    public void Exit(PlayerController player)
+    {
+        if (!IsServer) return;
+        
+        if (!_pilotReference.Value.TryGet(out NetworkObject no) || no != player.NetworkObject) return;
+
+        _pilotReference.Value = default;
+        
     }
 
     public void LeavePilot(PlayerController player)
     {
-        if (player != _pilot) return;
+        if (player != CurrentPilot) return;
         ToggleInteractability(true);
         
         ReturnCamera();
-        _pilot = null;
+        CurrentPilot = null;
         Debug.Log("Pilot left station");
     }
 
@@ -63,18 +122,37 @@ public class Station : NetworkBehaviour, IPilotable
         _stationCamera.Priority = -100;
     }
     
-    protected virtual void OnPlayerEnter() { }
-    protected virtual void OnPlayerLeave() { }
-    
-    public string GetInteractionPrompt() { return StationName; }
-    
     public void Interact() { }
-    public GameObject GetGameObject()
+
+    [ClientRpc]
+    public void SetVirtualParentClientRpc(ulong tankId, int dataIndex)
     {
-        return gameObject;
+        StartCoroutine(SetVirtualParentWhenSafe(tankId, dataIndex));
     }
 
+    private IEnumerator SetVirtualParentWhenSafe(ulong tankId, int dataIndex)
+    {
+        while (!NetworkManager.Singleton || NetworkManager.Singleton.SpawnManager == null) yield return null;
+        
+        NetworkObject no = null;
+        while (!NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(tankId, out no)) yield return null;
+
+        yield return null;
+        
+        if (no && no.TryGetComponent(out TankController tank))
+        {
+            _parentTank = tank;
+            VirtualParent = tank.SetupData[dataIndex].SpawnParent;
+        }
+        else Debug.LogError($"Virtual parent not assigned to station: [{transform.name}]");
+    }
+
+    #region Interface Return Methods
+    public GameObject GetGameObject() { return gameObject; }
+    public string GetInteractionPrompt() { return StationName; }
     public PilotableData GetPilotableData() { return StationData; }
+    public NetworkObjectReference GetNetworkObjectReference() { return new NetworkObjectReference(NetworkObject); }
+    #endregion
 
     public virtual void OnInputRelayed(InputAction.CallbackContext context) { }
 }

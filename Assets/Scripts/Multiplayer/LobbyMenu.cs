@@ -66,6 +66,8 @@ public class LobbyMenu : MonoBehaviour
             _presessionPanel.SetActive(false);
             _sessionPanel.SetActive(true);
         }
+
+        _startGameButton.gameObject.SetActive(NetworkManager.Singleton.IsHost);
     }
 
     private void OnClientStopped(bool _)

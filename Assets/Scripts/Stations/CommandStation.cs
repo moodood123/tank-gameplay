@@ -32,7 +32,7 @@ public class CommandStation : Station
         CanMove = false;
         if (!IsStanding) _mount.Deactivate();
         yield return Tween.LocalPosition(_stationCamera.transform, target, settings).ToYieldInstruction();
-        if (IsStanding) _mount.Activate(_pilot.CameraTransform);
+        if (IsStanding) _mount.Activate(CurrentPilot.CameraTransform);
         CanMove = true;
     }
     

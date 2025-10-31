@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using PrimeTween;
 using Unity.Cinemachine;
 using Unity.Netcode;
@@ -12,8 +13,17 @@ public class PlayerController : AgentController
     [field: SerializeField] public Transform CameraTransform { get; private set; }
     [SerializeField] private Transform _handTransform;
     [SerializeField] private LayerMask _interactionMask;
-    [SerializeField] private Transform _virtualParent;
 
+    [Header("General References")] 
+    [SerializeField] private GameObject _playerCamera;
+    [SerializeField] private GameObject _virtualCamera;
+    
+    [Header("Visual References")] 
+    [SerializeField] private List<GameObject> _thirdPersonElements = new List<GameObject>();
+    [SerializeField] private List<GameObject> _firstPersonElements = new List<GameObject>();
+    [SerializeField] private int _thirdPersonLayerMask;
+    [SerializeField] private int _firstPersonLayerMask;
+    
     [Header("Pause References")]
     [SerializeField] private GameObject _pauseMenu;
     [SerializeField] private CinemachinePanTilt _panTilt;
@@ -35,11 +45,6 @@ public class PlayerController : AgentController
     
     public delegate void OnInteractableChanged(IInteractable newInteractable);
     public event OnInteractableChanged onInteractableChanged;
-    public delegate void OnStationChanged(IPilotable previousPilotable, IPilotable newPilotable);
-    public event OnStationChanged onStationChanged;
-    
-    public delegate void OnPause();
-    public static event OnPause onPause;
 
     private void Awake()
     {
@@ -58,19 +63,45 @@ public class PlayerController : AgentController
         _pi.onActionTriggered -= OnInputReceived;
     }
 
+    public override void OnNetworkSpawn()
+    {
+        base.OnNetworkSpawn();
+
+        foreach (GameObject element in _thirdPersonElements)
+        {
+            element.layer = IsOwner ? _thirdPersonLayerMask : _firstPersonLayerMask;
+        }
+
+        foreach (GameObject element in _firstPersonElements)
+        {
+            element.layer =  IsOwner ? _firstPersonLayerMask : _thirdPersonLayerMask;
+        }
+
+        _playerCamera.SetActive(IsOwner);
+        _virtualCamera.SetActive(IsOwner);
+        _pi.enabled = IsOwner;
+    }
+
+    public override void OnNetworkDespawn()
+    {
+        base.OnNetworkDespawn();
+    }
+
     protected override void Start()
     {
         base.Start();
         HideCursor();
-        if (_virtualParent.parent == transform) _virtualParent.parent = null;
     }
 
     private void Update()
     {
         CheckForInteractables();
+    }
 
-        transform.position = _virtualParent.position;
-        transform.rotation = _virtualParent.rotation;
+    private void LateUpdate()
+    {
+        transform.position = _currentPilotable.GetPilotableData().PilotPosition.position;
+        transform.rotation = _currentPilotable.GetPilotableData().PilotPosition.rotation;
     }
 
     private void TryInteract()
@@ -83,9 +114,9 @@ public class PlayerController : AgentController
         if (_currentInteractable == null) return;
         
         // Check for pilotable
-        if (_currentInteractable is IPilotable pilotable && pilotable.TryEnterPilot(this))
+        if (_currentInteractable is IPilotable pilotable && _canMove)
         {
-            StartCoroutine(MoveToStation(pilotable));
+            RequestEnterStationServerRpc(pilotable.GetNetworkObjectReference());
         }
         
         // Check for pickup
@@ -113,16 +144,53 @@ public class PlayerController : AgentController
         CheckForInteractables();
     }
 
-    public bool Initialize(IPilotable pilotable)
+    [ServerRpc(RequireOwnership = false)]
+    private void RequestEnterStationServerRpc(NetworkObjectReference stationReference)
     {
-        bool succeeded = pilotable.TryEnterPilot(this);
+        if (!stationReference.TryGet(out NetworkObject no) || !no.TryGetComponent(out Station station)) return;
 
-        if (succeeded)
+        if (station.TryEnter(this))
         {
+            AssignStationClientRpc(stationReference);
+        }
+    }
+
+    [ServerRpc]
+    private void RequestPickupItemServerRpc(NetworkObjectReference pickupReference)
+    {
+        if (!pickupReference.TryGet(out NetworkObject no) || !no.TryGetComponent(out IPickup pickup)) return;
+
+        if (pickup.TryPickup(_handTransform, out IPickup item))
+        {
+            // TODO: Add logic for picking up items
+        }
+    }
+
+    [ServerRpc]
+    private void RequestPlaceItemServerRpc(NetworkObjectReference pickupReference)
+    {
+        if (!pickupReference.TryGet(out NetworkObject no) || !no.TryGetComponent(out IReceiver receiver)) return;
+
+        if (receiver.TryPlaceItem(_currentPickup))
+        {
+            // TODO: Add logic for dropping items
+        }
+    }
+
+    [ClientRpc]
+    public void AssignStationClientRpc(NetworkObjectReference stationReference)
+    {
+        Debug.Log("<color=orange>Assigning station</color>");
+        if (stationReference.TryGet(out NetworkObject no) && no.TryGetComponent(out IPilotable pilotable))
+        {
+            // Leave the current station
+            _currentPilotable?.Exit(this);
+            if (_currentPilotable != null) _currentPilotable.onAnimationTriggered -= OnAnimationTriggered;
+            
+            // Enter the new station
+            _currentPilotable = pilotable;
             StartCoroutine(MoveToStation(pilotable));
         }
-
-        return succeeded;
     }
 
     private IEnumerator MoveToStation(IPilotable pilotable)
@@ -130,19 +198,11 @@ public class PlayerController : AgentController
         // Disable movement
         _canMove = false;
         
-        // Leave the current station
-        _currentPilotable?.LeavePilot(this);
-        if (_currentPilotable != null) _currentPilotable.onAnimationTriggered -= OnAnimationTriggered;
-        
         // Lerp to the new station
-        //transform.parent = pilotable.GetPilotableData().PilotPosition;
-        _virtualParent.parent = pilotable.GetPilotableData().PilotPosition;
-        yield return Tween.LocalPosition(_virtualParent, Vector3.zero, _transitionSettings).ToYieldInstruction();
+        yield return Tween.LocalPosition(pilotable.GetPilotableData().PilotPosition, Vector3.zero, _transitionSettings).ToYieldInstruction();
         
         // Enter the new station
-        _currentPilotable = pilotable;
         if (_currentPilotable != null) _currentPilotable.onAnimationTriggered += OnAnimationTriggered;
-        _virtualParent.localPosition = Vector3.zero;
         
         // Re-enable movement
         _canMove = true;
@@ -153,6 +213,7 @@ public class PlayerController : AgentController
         _pa.Animate(animationTrigger);
     }
 
+    #region Interaction Detection
     private void CheckForInteractables()
     {
         if (TryGetInteractable(out IInteractable interactable)) { }
@@ -172,22 +233,10 @@ public class PlayerController : AgentController
         if (hit.collider.TryGetComponent(out interactable)) return true;
         return false;
     }
-
-    private void OnInputReceived(InputAction.CallbackContext context)
-    {
-        _currentPilotable?.OnInputRelayed(context);
-
-        switch (context.action.name)
-        {
-            case "Interact":
-                if (context.action.IsPressed()) TryInteract();
-                break;
-            case "Pause":
-                TogglePause();
-                break;
-        }
-    }
-
+    
+    #endregion
+    
+    #region UI Handlers
     public void TogglePause()
     {
         _isPaused = !_isPaused;
@@ -204,10 +253,26 @@ public class PlayerController : AgentController
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
     }
-
+    
     private void HideCursor()
     {
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
+    }
+    #endregion
+    
+    private void OnInputReceived(InputAction.CallbackContext context)
+    {
+        _currentPilotable?.OnInputRelayed(context);
+
+        switch (context.action.name)
+        {
+            case "Interact":
+                if (context.action.IsPressed()) TryInteract();
+                break;
+            case "Pause":
+                TogglePause();
+                break;
+        }
     }
 }

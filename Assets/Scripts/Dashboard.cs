@@ -20,21 +20,25 @@ public class Dashboard : MonoBehaviour
 
     private void OnDisable()
     {
-        _tankController.onBroadcastSpeed -= UpdateSpeed;
-        _tankController.onBroadcastThrottle -= UpdateThrottle;
-        _tankController.onBroadcastCurrentGear -= UpdateGear;
+        if (_tankController)
+        {
+            _tankController.onBroadcastSpeed -= UpdateSpeed;
+            _tankController.onBroadcastThrottle -= UpdateThrottle;
+            _tankController.onBroadcastCurrentGear -= UpdateGear;
+        }
     }
 
-    private void UpdateSpeed(float speed)
+    
+    private void UpdateSpeed(float newSpeed)
     {
-        _speedIndicator.SetValue(speed.ToString("000.00"));
-        if (_speedGauge) _speedGauge.UpdateValue(speed);
+        _speedIndicator.SetValue(newSpeed.ToString("000.00"));
+        if (_speedGauge) _speedGauge.UpdateValue(newSpeed);
     }
 
-    private void UpdateThrottle(float throttle)
+    private void UpdateThrottle(float newThrottle)
     {
-        _throttleIndicator.SetValue(throttle.ToString("000.00"));
-        if (_throttleGauge) _throttleGauge.UpdateValue(throttle);
+        _throttleIndicator.SetValue(newThrottle.ToString("000.00"));
+        if (_throttleGauge) _throttleGauge.UpdateValue(newThrottle);
     }
 
     private void UpdateGear(Gear gear) => _gearIndicator.SetValue(gear.Type.ToString());
