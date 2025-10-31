@@ -27,8 +27,6 @@ public class GunnerStation : Station
 
     private void HandleOrientation()
     {
-        Debug.Log(_turretRotation);
-
         bool isControllingClient = IsClient && CurrentPilot && _parentTank.NetworkManager.LocalClientId == CurrentPilot.OwnerClientId;
         
         if (isControllingClient)

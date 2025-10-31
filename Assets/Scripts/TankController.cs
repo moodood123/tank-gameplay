@@ -43,8 +43,6 @@ public class TankController : NetworkBehaviour
         _rb = GetComponent<Rigidbody>();
         _no = GetComponent<NetworkObject>();
         _currentGear = _gears[0];
-        
-        Debug.Log($"[Server:{IsServer}] TankController Awake | NetworkObjectId: {(_no ? _no.NetworkObjectId : 0)} | InstanceID: {GetInstanceID()} | name: {name}");
     }
     
     public override void OnNetworkSpawn()

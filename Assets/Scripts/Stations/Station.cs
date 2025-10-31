@@ -9,8 +9,10 @@ public class Station : NetworkBehaviour, IPilotable
     [field: SerializeField] public string StationName { get; private set; }
     [field: SerializeField] public PilotableData StationData { get; private set; }
 
+    [Header("References")]
     [SerializeField] protected CinemachineCamera _stationCamera;
-
+    [SerializeField] private MeshRenderer _visualReference;
+    
     private NetworkVariable<NetworkObjectReference> _pilotReference =
         new NetworkVariable<NetworkObjectReference>(default, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
 
@@ -65,11 +67,25 @@ public class Station : NetworkBehaviour, IPilotable
         if (newReference.TryGet(out NetworkObject no) && no.TryGetComponent(out PlayerController player))
         {
             CurrentPilot = player;
+            DisableInteraction();
         }
         else
         {
             CurrentPilot = null;
+            EnableInteraction();
         }
+    }
+
+    private void EnableInteraction()
+    {
+        _collider.enabled = true;
+        _visualReference.enabled = true;
+    }
+
+    private void DisableInteraction()
+    {
+        _collider.enabled = false;
+        _visualReference.enabled = false;
     }
     
     public bool TryEnter(PlayerController player)

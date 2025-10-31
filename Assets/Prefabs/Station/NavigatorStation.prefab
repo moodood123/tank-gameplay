@@ -366,3 +366,4 @@ MonoBehaviour:
   <StationData>k__BackingField:
     <PilotPosition>k__BackingField: {fileID: 1282998865384887396}
   _stationCamera: {fileID: 67024553915989467}
+  _visualReference: {fileID: 7088053850280883895}

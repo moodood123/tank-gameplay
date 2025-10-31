@@ -392,6 +392,7 @@ MonoBehaviour:
   <StationData>k__BackingField:
     <PilotPosition>k__BackingField: {fileID: 6113140800082182873}
   _stationCamera: {fileID: 8115691635234317197}
+  _visualReference: {fileID: 8138620865450523139}
   _channel: 0
   _turretSpeed: {x: 40, y: 20}
   _tiltConstraints: {x: -180, y: 180}

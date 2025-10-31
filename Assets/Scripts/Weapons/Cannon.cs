@@ -31,19 +31,14 @@ public class Cannon : Gun
     
     public override void OnStartFire(bool debugFire = false)
     {
-        if (IsLoaded)
-        {
-            Fire(_loader.CurrentShell.ProjectilePrefab);
-            _impulseSource.GenerateImpulse(_camImpulseForce);
-            _shotEffect.SendEvent("OnFire");
-            StartCoroutine(RecoilSequence());
-        }
-        else if (debugFire)
-        {
-            Fire(_projectile);
-            _shotEffect.SendEvent("OnFire");
-            StartCoroutine(RecoilSequence());
-        }
+        if (!IsLoaded && !debugFire) return;
+
+        GameObject projectile = IsLoaded ? _loader.CurrentShell.ProjectilePrefab : _projectile;
+        
+        Fire(projectile);
+        _impulseSource.GenerateImpulse(_camImpulseForce);
+        _shotEffect.SendEvent("OnFire");
+        StartCoroutine(RecoilSequence());
     }
 
     private IEnumerator RecoilSequence()

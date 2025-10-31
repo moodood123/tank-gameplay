@@ -99,6 +99,7 @@ MonoBehaviour:
   <StationData>k__BackingField:
     <PilotPosition>k__BackingField: {fileID: 6719743051138396849}
   _stationCamera: {fileID: 5365453895511943723}
+  _visualReference: {fileID: 1119080386792270741}
 --- !u!1 &2938190481658548456
 GameObject:
   m_ObjectHideFlags: 0

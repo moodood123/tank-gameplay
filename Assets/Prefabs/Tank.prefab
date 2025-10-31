@@ -650,6 +650,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _cannonPanPivot: {fileID: 2951059868564064090}
   _cannonTiltPivot: {fileID: 5654877506117943520}
+  _debugCannonReference: {fileID: 0}
 --- !u!1 &5090622741285691423
 GameObject:
   m_ObjectHideFlags: 0
@@ -1153,13 +1154,13 @@ MonoBehaviour:
   - <Type>k__BackingField: 0
     <SpeedFactor>k__BackingField: 0
   - <Type>k__BackingField: 1
-    <SpeedFactor>k__BackingField: -1
+    <SpeedFactor>k__BackingField: -0.5
   - <Type>k__BackingField: 2
-    <SpeedFactor>k__BackingField: 1
+    <SpeedFactor>k__BackingField: 0.6
   - <Type>k__BackingField: 3
-    <SpeedFactor>k__BackingField: 2
+    <SpeedFactor>k__BackingField: 0.9
   - <Type>k__BackingField: 4
-    <SpeedFactor>k__BackingField: 3
+    <SpeedFactor>k__BackingField: 1.2
 --- !u!114 &7201770650366037293
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2470,7 +2471,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5909304678907903779, guid: efbe942fdcdc7704fb608a126ad479ef, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0.118
+      value: -0.132
       objectReference: {fileID: 0}
     - target: {fileID: 5909304678907903779, guid: efbe942fdcdc7704fb608a126ad479ef, type: 3}
       propertyPath: m_LocalRotation.w
@@ -3792,6 +3793,10 @@ PrefabInstance:
       propertyPath: _onInteract.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
       value: 6
       objectReference: {fileID: 0}
+    - target: {fileID: 2066748557921139653, guid: 403302225e98efc4f87c0305897e9a62, type: 3}
+      propertyPath: _onInteract.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 7832147075705425996}
     - target: {fileID: 2066748557921139653, guid: 403302225e98efc4f87c0305897e9a62, type: 3}
       propertyPath: _onInteract.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
       value: 2

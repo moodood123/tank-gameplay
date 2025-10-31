@@ -34,6 +34,7 @@ public class PlayerController : AgentController
     private bool _isPaused  = false;
     private bool _canMove = true;
     
+    // Accessible interface references
     private IInteractable _currentInteractable;
     private IPilotable _currentPilotable;
     private IPickup _currentPickup;
@@ -162,7 +163,7 @@ public class PlayerController : AgentController
 
         if (pickup.TryPickup(_handTransform, out IPickup item))
         {
-            // TODO: Add logic for picking up items
+            
         }
     }
 

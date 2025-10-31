@@ -100,6 +100,7 @@ MonoBehaviour:
   <StationData>k__BackingField:
     <PilotPosition>k__BackingField: {fileID: 1040119319160231614}
   _stationCamera: {fileID: 5207120981301033100}
+  _visualReference: {fileID: 8065682735924891667}
   _moveThrottleAcceleration: 6
   _moveThrottleDecay: 6
   _moveThrottleRange: {x: 0, y: 10}
