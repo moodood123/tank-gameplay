@@ -181,7 +181,6 @@ public class PlayerController : AgentController
     [ClientRpc]
     public void AssignStationClientRpc(NetworkObjectReference stationReference)
     {
-        Debug.Log("<color=orange>Assigning station</color>");
         if (stationReference.TryGet(out NetworkObject no) && no.TryGetComponent(out IPilotable pilotable))
         {
             // Leave the current station

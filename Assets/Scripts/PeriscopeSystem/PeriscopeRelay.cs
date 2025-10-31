@@ -55,7 +55,7 @@ public static class RenderQueue
             yield return new WaitForEndOfFrame();
             
             Camera camera = _renderQueue.Dequeue();
-            camera.Render();
+            if (camera) camera.Render();
             yield return null;
         }
     }

@@ -92,7 +92,6 @@ public class Station : NetworkBehaviour, IPilotable
     {
         if (!IsServer) return false;
         if (IsOccupied) return false;
-        Debug.Log("<color=orange>Entering Station</color>");
         
         _pilotReference.Value = player.NetworkObject;
         return true;
