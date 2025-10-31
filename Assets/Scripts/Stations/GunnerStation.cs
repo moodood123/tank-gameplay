@@ -1,11 +1,9 @@
+using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
 public class GunnerStation : Station
 {
-    [SerializeField] private Turret _turret;
-    [SerializeField] private PowerRelay _relay;
-
     [Header("Settings")] 
     [SerializeField] private PowerChannel _channel;
     [SerializeField] private Vector2 _turretSpeed = new Vector2();
@@ -17,19 +15,12 @@ public class GunnerStation : Station
     private Vector2 _moveInput;
     private Vector2 _turretRotation;
 
-    public override void OnNetworkSpawn()
-    {
-        //_turret = VirtualParent.GetComponentInParent<Turret>();
-        //_relay = VirtualParent.GetComponentInParent<PowerRelay>();
-
-        //if (!_turret) Debug.LogError("No turret found");
-        //if (!_relay) Debug.LogError("No relay found");
-    }
+    public delegate void OnTurretRotationChanged(Vector2 turretRotation);
+    public event OnTurretRotationChanged onTurretRotationChanged;
     
     protected override void Update()
     {
         base.Update();
-        return;
         HandleInput();
         HandleOrientation();
     }
@@ -37,27 +28,50 @@ public class GunnerStation : Station
     private void HandleOrientation()
     {
         Debug.Log(_turretRotation);
-        if (_turret) _turret.SetRotation(_turretRotation);
+
+        bool isControllingClient = IsClient && CurrentPilot && _parentTank.NetworkManager.LocalClientId == CurrentPilot.OwnerClientId;
+        
+        if (isControllingClient)
+        {
+            if (IsServer)
+            {
+                onTurretRotationChanged?.Invoke(_turretRotation);
+            }
+            else
+            {
+                HandleOrientationServerRpc(_turretRotation);
+            }
+        }
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    private void HandleOrientationServerRpc(Vector2 turretRotation, ServerRpcParams rpcParams = default)
+    {
+        if (!CurrentPilot) return;
+        if (rpcParams.Receive.SenderClientId != CurrentPilot.OwnerClientId) return;
+
+        onTurretRotationChanged?.Invoke(turretRotation);
     }
 
     private void HandleInput()
     {
+        // TODO: Reintroduce power mechanics to turret control
         //if (_relay.PowerRatios[_channel] <= 0f) return;
         
-        float x = _turretRotation.x + _moveInput.x * _turretSpeed.x * Time.deltaTime;
-        float y = _turretRotation.y + _moveInput.y * _turretSpeed.y * Time.deltaTime;
+        float pan = _turretRotation.x + _moveInput.x * _turretSpeed.x * Time.deltaTime;
+        float tilt = _turretRotation.y + _moveInput.y * _turretSpeed.y * Time.deltaTime;
         
-        if (x < _tiltConstraints.x)
-            x = _wrapXRotation ? _tiltConstraints.y : _tiltConstraints.x;
-        else if (x > _tiltConstraints.y)
-            x = _wrapXRotation ? _tiltConstraints.x : _tiltConstraints.y;
+        if (pan < _tiltConstraints.x)
+            pan = _wrapXRotation ? _tiltConstraints.y : _tiltConstraints.x;
+        else if (pan > _tiltConstraints.y)
+            pan = _wrapXRotation ? _tiltConstraints.x : _tiltConstraints.y;
 
-        if (y < _panConstraints.x)
-            y = _wrapYRotation ? _panConstraints.y : _panConstraints.x;
-        else if (y > _panConstraints.y)
-            y = _wrapYRotation ? _panConstraints.x : _panConstraints.y;
+        if (tilt < _panConstraints.x)
+            tilt = _wrapYRotation ? _panConstraints.y : _panConstraints.x;
+        else if (tilt > _panConstraints.y)
+            tilt = _wrapYRotation ? _panConstraints.x : _panConstraints.y;
 
-        _turretRotation = new Vector2(x, y);
+        _turretRotation = new Vector2(pan, tilt);
     }
     
     public override void OnInputRelayed(InputAction.CallbackContext context)

@@ -1132,6 +1132,7 @@ MonoBehaviour:
   ShowTopMostFoldoutHeaderGroup: 1
   _turnSpeed: 4
   _moveSpeed: 3
+  _turret: {fileID: 8380443731000708822}
   _playerSpawner: {fileID: 7201770650366037293}
   <SetupData>k__BackingField:
   - <SpawnParent>k__BackingField: {fileID: 6881145380152996535}

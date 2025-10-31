@@ -10,6 +10,9 @@ public class TankController : NetworkBehaviour
     [SerializeField] private float _turnSpeed;
     [SerializeField] private float _moveSpeed;
 
+    [Header("Module References")] 
+    [SerializeField] private Turret _turret;
+    
     [Header("Network Setup References")] 
     [SerializeField] private PlayerSpawner _playerSpawner;
     [field: SerializeField] public List<StationSetupData> SetupData { get; private set; } = new List<StationSetupData>();
@@ -21,6 +24,7 @@ public class TankController : NetworkBehaviour
     private Vector2 _input;
 
     private DriverStation _driverStation;
+    private GunnerStation _gunnerStation;
 
     private List<Station> _stations = new List<Station>();
     
@@ -62,13 +66,18 @@ public class TankController : NetworkBehaviour
 
             _stations.Add(station);
 
-            if (station is DriverStation driverStation) _driverStation = driverStation;
-        }
-        
-        if (_driverStation)
-        {
-            _driverStation.onChangeGear += SetGear;
-            _driverStation.onMovementRelay += OnMovementRelay;
+            if (station is DriverStation driverStation)
+            {
+                _driverStation = driverStation;
+                _driverStation.onChangeGear += SetGear;
+                _driverStation.onMovementRelay += OnMovementRelay;
+            }
+
+            if (station is GunnerStation gunnerStation)
+            {
+                _gunnerStation = gunnerStation;
+                _gunnerStation.onTurretRotationChanged += SetTurretRotation;
+            }
         }
         
         // Spawn players
@@ -78,13 +87,18 @@ public class TankController : NetworkBehaviour
     public override void OnNetworkDespawn()
     {
         if (!IsServer) return;
-        
-        if (_driverStation) 
+
+        if (_driverStation)
         {
-            _driverStation.onChangeGear -= SetGear; 
-            _driverStation.onMovementRelay -= OnMovementRelay; 
+            _driverStation.onChangeGear -= SetGear;
+            _driverStation.onMovementRelay -= OnMovementRelay;
         }
-    }
+
+        if (_gunnerStation)
+        {
+            _gunnerStation.onTurretRotationChanged -= SetTurretRotation;
+        }
+}
 
     private void Update()
     {
@@ -102,6 +116,18 @@ public class TankController : NetworkBehaviour
             _rb.AddForce(transform.forward * _input.x * _currentGear.SpeedFactor * _moveSpeed * Time.fixedDeltaTime, ForceMode.VelocityChange);
             _rb.MoveRotation(Quaternion.Euler(transform.rotation.eulerAngles + transform.up * _input.y * _turnSpeed * Time.fixedDeltaTime));
         }
+    }
+
+    private void SetTurretRotation(Vector2 input)
+    {
+        // TODO: Add broadcast interval with smoothing system in receiving classes
+        if (IsServer) SetTurretRotationClientRpc(input);
+    }
+
+    [ClientRpc]
+    private void SetTurretRotationClientRpc(Vector2 input)
+    {
+        _turret.SetRotation(input);
     }
 
     [ClientRpc]
